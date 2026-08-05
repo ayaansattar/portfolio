@@ -1,6 +1,7 @@
 import Image from "next/image";
+import { ExperienceSection } from "@/components/ExperienceSection";
 import { SiteNav } from "@/components/SiteNav";
-import { TechSphereLazy } from "@/components/TechSphereLazy";
+import { TechnologiesSection } from "@/components/TechnologiesSection";
 
 const projects = [
   {
@@ -15,16 +16,6 @@ const projects = [
     description: "A placeholder for the next thing I'm shipping.",
     href: "#projects",
     stack: "TBD",
-  },
-];
-
-const experiences = [
-  {
-    role: "Student",
-    org: "Learning software development",
-    period: "Present",
-    detail:
-      "Building foundations in programming, web development, and shipping personal projects.",
   },
 ];
 
@@ -140,54 +131,9 @@ export default function Home() {
         </ul>
       </section>
 
-      <section
-        id="experience"
-        className="border-y border-ink/10 bg-highlight"
-      >
-        <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10">
-          <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
-            Experience
-          </h2>
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
-            Roles, school, and anything that shaped how I work.
-          </p>
-          <ol className="mt-12 space-y-10">
-            {experiences.map((item) => (
-              <li
-                key={`${item.role}-${item.org}`}
-                className="grid gap-3 sm:grid-cols-[8rem_1fr] sm:gap-10"
-              >
-                <p className="text-sm font-medium tracking-wide text-ink-soft uppercase">
-                  {item.period}
-                </p>
-                <div>
-                  <h3 className="text-xl font-medium text-ink">{item.role}</h3>
-                  <p className="mt-1 text-base text-accent">{item.org}</p>
-                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-soft">
-                    {item.detail}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <ExperienceSection />
 
-      <section
-        id="technologies"
-        className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10"
-      >
-        <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
-          Technologies
-        </h2>
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
-          Drag the sphere to explore the tools I use and what I&apos;m learning
-          next.
-        </p>
-        <div className="mt-10">
-          <TechSphereLazy technologies={technologies} />
-        </div>
-      </section>
+      <TechnologiesSection technologies={technologies} />
 
       <footer className="border-t border-ink/10">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10">

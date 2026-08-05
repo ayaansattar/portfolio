@@ -18,8 +18,12 @@ const TechSphere = dynamic(
 
 type TechSphereLazyProps = {
   technologies: Technology[];
+  assemble?: boolean;
 };
 
-export function TechSphereLazy({ technologies }: TechSphereLazyProps) {
-  return <TechSphere technologies={technologies} />;
+export function TechSphereLazy({
+  technologies,
+  assemble = false,
+}: TechSphereLazyProps) {
+  return <TechSphere technologies={technologies} assemble={assemble} />;
 }

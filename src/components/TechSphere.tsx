@@ -12,12 +12,16 @@ export type Technology = {
 
 type TechSphereProps = {
   technologies: Technology[];
+  assemble?: boolean;
 };
 
 const SPHERE_RADIUS = 2.35;
+const START_RADIUS = SPHERE_RADIUS * 3.6;
 const HOVER_RADIUS_PX = 44;
 const DRAG_SPEED = 0.0055;
 const AUTO_SPIN = 0.07;
+const ASSEMBLE_STAGGER = 0.09;
+const ASSEMBLE_DURATION = 1.15;
 
 function fibonacciSphere(count: number, radius: number) {
   if (count === 1) return [[0, radius, 0] as const];
@@ -38,6 +42,10 @@ function fibonacciSphere(count: number, radius: number) {
   }
 
   return points;
+}
+
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
 }
 
 function TechLogo({ name, src }: { name: string; src: string }) {
@@ -67,14 +75,24 @@ function TechLogo({ name, src }: { name: string; src: string }) {
   );
 }
 
-function TechCloud({ technologies }: { technologies: Technology[] }) {
+function TechCloud({
+  technologies,
+  assemble,
+}: {
+  technologies: Technology[];
+  assemble: boolean;
+}) {
   const { camera, gl } = useThree();
   const groupRef = useRef<THREE.Group>(null);
+  const itemRefs = useRef<Array<THREE.Group | null>>([]);
+  const wireRef = useRef<THREE.Mesh>(null);
   const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
   const labelRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const hoveredRef = useRef<number | null>(null);
   const draggingRef = useRef(false);
   const lastPointer = useRef({ x: 0, y: 0 });
+  const assembleTime = useRef(0);
+  const assembledRef = useRef(false);
   const pointerRef = useRef({
     x: 0,
     y: 0,
@@ -93,11 +111,20 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
     [technologies.length],
   );
 
+  const directions = useMemo(
+    () =>
+      points.map(([x, y, z]) => {
+        const length = Math.hypot(x, y, z) || 1;
+        return [x / length, y / length, z / length] as const;
+      }),
+    [points],
+  );
+
   useEffect(() => {
     const canvas = gl.domElement;
 
     const onPointerDown = (event: PointerEvent) => {
-      if (event.button !== 0) return;
+      if (event.button !== 0 || !assembledRef.current) return;
       draggingRef.current = true;
       lastPointer.current = { x: event.clientX, y: event.clientY };
       pointerRef.current.buttons = event.buttons;
@@ -117,7 +144,6 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
       const dy = event.clientY - lastPointer.current.y;
       lastPointer.current = { x: event.clientX, y: event.clientY };
 
-      // Rotate the sphere itself on world axes so drag works in every direction.
       groupRef.current.rotateOnWorldAxis(axisY, dx * DRAG_SPEED);
       groupRef.current.rotateOnWorldAxis(axisX, dy * DRAG_SPEED);
     };
@@ -153,7 +179,47 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
     const group = groupRef.current;
     if (!group) return;
 
-    if (!draggingRef.current && hoveredRef.current === null) {
+    if (assemble) {
+      assembleTime.current += delta;
+    }
+
+    const totalAssembleTime =
+      ASSEMBLE_STAGGER * Math.max(technologies.length - 1, 0) +
+      ASSEMBLE_DURATION;
+    const fullyAssembled =
+      assemble && assembleTime.current >= totalAssembleTime;
+    assembledRef.current = fullyAssembled;
+
+    if (wireRef.current) {
+      const wireProgress = assemble
+        ? Math.min(1, assembleTime.current / 0.45)
+        : 0;
+      const material = wireRef.current.material as THREE.MeshBasicMaterial;
+      material.opacity = 0.12 * easeOutCubic(wireProgress);
+    }
+
+    for (let i = 0; i < directions.length; i += 1) {
+      const item = itemRefs.current[i];
+      if (!item) continue;
+
+      const localTime = assemble
+        ? Math.max(0, assembleTime.current - i * ASSEMBLE_STAGGER)
+        : 0;
+      const t = Math.min(1, localTime / ASSEMBLE_DURATION);
+      const eased = easeOutCubic(t);
+      const [dx, dy, dz] = directions[i];
+      const radius = THREE.MathUtils.lerp(START_RADIUS, SPHERE_RADIUS, eased);
+
+      item.position.set(dx * radius, dy * radius, dz * radius);
+      item.visible = assemble && t > 0.02;
+      item.userData.arrive = eased;
+    }
+
+    if (
+      fullyAssembled &&
+      !draggingRef.current &&
+      hoveredRef.current === null
+    ) {
       group.rotateOnWorldAxis(axisY, delta * AUTO_SPIN);
     }
 
@@ -164,8 +230,9 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
     let bestFrontness = -Infinity;
 
     for (let i = 0; i < points.length; i += 1) {
-      const [x, y, z] = points[i];
-      worldPos.set(x, y, z).applyMatrix4(group.matrixWorld);
+      const item = itemRefs.current[i];
+      if (!item) continue;
+      worldPos.copy(item.position).applyMatrix4(group.matrixWorld);
       const frontness = -worldPos.dot(camDir) / SPHERE_RADIUS;
 
       if (frontness > bestFrontness) {
@@ -185,12 +252,13 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
       pointer.y >= rect.top &&
       pointer.y <= rect.bottom;
 
-    if (insideCanvas && !draggingRef.current) {
+    if (insideCanvas && fullyAssembled && !draggingRef.current) {
       let bestDistance = HOVER_RADIUS_PX;
 
       for (let i = 0; i < points.length; i += 1) {
-        const [x, y, z] = points[i];
-        worldPos.set(x, y, z).applyMatrix4(group.matrixWorld);
+        const item = itemRefs.current[i];
+        if (!item) continue;
+        worldPos.copy(item.position).applyMatrix4(group.matrixWorld);
         const frontness = -worldPos.dot(camDir) / SPHERE_RADIUS;
         if (frontness < -0.05) continue;
 
@@ -216,20 +284,23 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
     }
 
     for (let i = 0; i < points.length; i += 1) {
-      const [x, y, z] = points[i];
-      worldPos.set(x, y, z).applyMatrix4(group.matrixWorld);
+      const item = itemRefs.current[i];
+      if (!item) continue;
+
+      worldPos.copy(item.position).applyMatrix4(group.matrixWorld);
       const frontness = -worldPos.dot(camDir) / SPHERE_RADIUS;
       const depth = Math.pow((frontness + 1) / 2, 2.4);
       const isFront = i === bestIndex;
       const isHovered = i === hovered;
+      const arrive = Number(item.userData.arrive ?? 0);
 
-      let opacity = isFront ? 1 : 0.08 + depth * 0.72;
-      let scale = 1;
+      let opacity = (isFront ? 1 : 0.08 + depth * 0.72) * arrive;
+      let scale = 0.7 + arrive * 0.3;
       let filter = isFront
         ? "brightness(1.08) contrast(1.05)"
         : `brightness(${0.18 + depth * 0.62})`;
 
-      if (isHovered) {
+      if (isHovered && fullyAssembled) {
         opacity = 1;
         scale = 1.4;
         filter =
@@ -245,57 +316,71 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
 
       const label = labelRefs.current[i];
       if (label) {
-        label.style.opacity = isFront || isHovered ? "1" : "0";
+        label.style.opacity =
+          fullyAssembled && (isFront || isHovered) ? "1" : "0";
       }
     }
   });
 
   return (
     <group ref={groupRef}>
-      <mesh>
+      <mesh ref={wireRef}>
         <sphereGeometry args={[SPHERE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color="#0f6b56"
           wireframe
           transparent
-          opacity={0.12}
+          opacity={0}
         />
       </mesh>
 
-      {technologies.map((tech, index) => (
-        <Html
-          key={tech.name}
-          position={points[index]}
-          center
-          transform
-          sprite
-          distanceFactor={8.5}
-          wrapperClass="tech-html"
-          style={{ pointerEvents: "none" }}
-        >
-          <div
+      {technologies.map((tech, index) => {
+        const [dx, dy, dz] = directions[index];
+        return (
+          <group
+            key={tech.name}
             ref={(node) => {
-              nodeRefs.current[index] = node;
+              itemRefs.current[index] = node;
             }}
-            className="pointer-events-none flex w-12 flex-col items-center gap-0.5"
+            position={[dx * START_RADIUS, dy * START_RADIUS, dz * START_RADIUS]}
+            visible={false}
           >
-            <TechLogo name={tech.name} src={tech.logo} />
-            <span
-              ref={(node) => {
-                labelRefs.current[index] = node;
-              }}
-              className="min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-ink opacity-0"
+            <Html
+              center
+              transform
+              sprite
+              distanceFactor={8.5}
+              wrapperClass="tech-html"
+              style={{ pointerEvents: "none" }}
             >
-              {tech.name}
-            </span>
-          </div>
-        </Html>
-      ))}
+              <div
+                ref={(node) => {
+                  nodeRefs.current[index] = node;
+                }}
+                className="pointer-events-none flex w-12 flex-col items-center gap-0.5"
+              >
+                <TechLogo name={tech.name} src={tech.logo} />
+                <span
+                  ref={(node) => {
+                    labelRefs.current[index] = node;
+                  }}
+                  className="min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-ink opacity-0"
+                >
+                  {tech.name}
+                </span>
+              </div>
+            </Html>
+          </group>
+        );
+      })}
     </group>
   );
 }
 
-export function TechSphere({ technologies }: TechSphereProps) {
+export function TechSphere({
+  technologies,
+  assemble = false,
+}: TechSphereProps) {
   return (
     <div className="relative mx-auto h-[min(70vw,28rem)] w-full max-w-3xl cursor-grab active:cursor-grabbing">
       <Canvas
@@ -306,7 +391,7 @@ export function TechSphere({ technologies }: TechSphereProps) {
         style={{ touchAction: "none" }}
       >
         <ambientLight intensity={1} />
-        <TechCloud technologies={technologies} />
+        <TechCloud technologies={technologies} assemble={assemble} />
       </Canvas>
       <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-sm text-ink-soft">
         Drag to rotate
