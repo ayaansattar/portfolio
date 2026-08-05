@@ -29,19 +29,25 @@ const experiences = [
 ];
 
 const technologies = [
-  "Python",
-  "JavaScript",
-  "TypeScript",
-  "HTML",
-  "CSS",
-  "Next.js",
-  "React",
-  "Tailwind CSS",
-  "Git",
-  "Vercel",
-  "APIs",
-  "Databases",
-  "Testing",
+  { name: "Python", logo: "/tech/python.svg" },
+  { name: "TypeScript", logo: "/tech/typescript.svg" },
+  { name: "JavaScript", logo: "/tech/javascript.svg" },
+  { name: "HTML/CSS", logo: "/tech/html-css.svg" },
+  { name: "SQL", logo: "/tech/sql.svg" },
+  { name: "C/C++", logo: "/tech/cpp.svg" },
+  { name: "Java", logo: "/tech/java.svg" },
+  { name: "React", logo: "/tech/react.svg" },
+  { name: "Next.js", logo: "/tech/nextjs.svg" },
+  { name: "Expo", logo: "/tech/expo.svg" },
+  { name: "Tailwind CSS", logo: "/tech/tailwind.svg" },
+  { name: "FastAPI", logo: "/tech/fastapi.svg" },
+  { name: "Prisma", logo: "/tech/prisma.svg" },
+  { name: "Firebase", logo: "/tech/firebase.svg" },
+  { name: "SQLite", logo: "/tech/sqlite.svg" },
+  { name: "Redis", logo: "/tech/redis.svg" },
+  { name: "MongoDB", logo: "/tech/mongodb.svg" },
+  { name: "Docker", logo: "/tech/docker.svg" },
+  { name: "Git", logo: "/tech/git.svg" },
 ];
 
 export default function Home() {

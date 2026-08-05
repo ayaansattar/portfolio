@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { Technology } from "@/components/TechSphere";
 
 const TechSphere = dynamic(
   () =>
@@ -16,7 +17,7 @@ const TechSphere = dynamic(
 );
 
 type TechSphereLazyProps = {
-  technologies: string[];
+  technologies: Technology[];
 };
 
 export function TechSphereLazy({ technologies }: TechSphereLazyProps) {

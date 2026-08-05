@@ -1,11 +1,17 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
+import * as THREE from "three";
+
+export type Technology = {
+  name: string;
+  logo: string;
+};
 
 type TechSphereProps = {
-  technologies: string[];
+  technologies: Technology[];
 };
 
 function fibonacciSphere(count: number, radius: number) {
@@ -29,11 +35,77 @@ function fibonacciSphere(count: number, radius: number) {
   return points;
 }
 
-function TechCloud({ technologies }: { technologies: string[] }) {
+function TechLogo({ name, src }: { name: string; src: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <div className="flex h-7 w-7 items-center justify-center rounded-md bg-ink/10 text-[10px] font-semibold text-ink">
+        {name.charAt(0)}
+      </div>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      width={28}
+      height={28}
+      draggable={false}
+      onError={() => setFailed(true)}
+      className="h-7 w-7 object-contain"
+    />
+  );
+}
+
+function TechCloud({ technologies }: { technologies: Technology[] }) {
+  const [frontIndex, setFrontIndex] = useState(0);
+  const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const frontRef = useRef(0);
+  const camDir = useMemo(() => new THREE.Vector3(), []);
+  const worldPos = useMemo(() => new THREE.Vector3(), []);
+  const toCamera = useMemo(() => new THREE.Vector3(), []);
+
   const points = useMemo(
     () => fibonacciSphere(technologies.length, 2.35),
     [technologies.length],
   );
+
+  useFrame(({ camera }) => {
+    camera.getWorldDirection(camDir);
+
+    let bestIndex = 0;
+    let bestFacing = -Infinity;
+
+    for (let i = 0; i < points.length; i += 1) {
+      const [x, y, z] = points[i];
+      worldPos.set(x, y, z);
+      toCamera.copy(worldPos).sub(camera.position).normalize();
+      const facing = toCamera.dot(camDir);
+
+      const t = (facing + 1) / 2;
+      const opacity = 0.22 + t * 0.78;
+      const brightness = 0.35 + t * 0.65;
+
+      const node = nodeRefs.current[i];
+      if (node) {
+        node.style.opacity = String(opacity);
+        node.style.filter = `brightness(${brightness})`;
+      }
+
+      if (facing > bestFacing) {
+        bestFacing = facing;
+        bestIndex = i;
+      }
+    }
+
+    if (bestIndex !== frontRef.current) {
+      frontRef.current = bestIndex;
+      setFrontIndex(bestIndex);
+    }
+  });
 
   return (
     <group>
@@ -49,17 +121,29 @@ function TechCloud({ technologies }: { technologies: string[] }) {
 
       {technologies.map((tech, index) => (
         <Html
-          key={tech}
+          key={tech.name}
           position={points[index]}
           center
           transform
           sprite
-          distanceFactor={7.5}
+          distanceFactor={8.5}
           style={{ pointerEvents: "none" }}
         >
-          <span className="select-none whitespace-nowrap text-sm font-medium tracking-wide text-ink sm:text-base">
-            {tech}
-          </span>
+          <div
+            ref={(node) => {
+              nodeRefs.current[index] = node;
+            }}
+            className="flex w-14 flex-col items-center gap-0.5"
+          >
+            <TechLogo name={tech.name} src={tech.logo} />
+            <span
+              className={`min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-ink transition-opacity duration-150 ${
+                index === frontIndex ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {tech.name}
+            </span>
+          </div>
         </Html>
       ))}
     </group>
