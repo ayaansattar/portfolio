@@ -66,11 +66,11 @@ function TechLogo({ name, src }: { name: string; src: string }) {
         img.style.display = "none";
         const fallback = document.createElement("div");
         fallback.className =
-          "flex h-5 w-5 items-center justify-center rounded-md bg-surface text-[9px] font-semibold text-text-primary";
+          "flex h-5 w-5 items-center justify-center text-[10px] font-semibold text-text-primary";
         fallback.textContent = name.charAt(0);
         img.parentElement?.appendChild(fallback);
       }}
-      className="h-5 w-5 object-contain"
+      className="h-5 w-5 object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.18)]"
     />
   );
 }
@@ -294,17 +294,16 @@ function TechCloud({
       const isHovered = i === hovered;
       const arrive = Number(item.userData.arrive ?? 0);
 
-      let opacity = (isFront ? 1 : 0.08 + depth * 0.72) * arrive;
+      let opacity = (isFront ? 1 : 0.22 + depth * 0.78) * arrive;
       let scale = 0.7 + arrive * 0.3;
       let filter = isFront
-        ? "brightness(1.08) contrast(1.05)"
-        : `brightness(${0.18 + depth * 0.62})`;
+        ? "brightness(1.05) contrast(1.02)"
+        : `brightness(${0.55 + depth * 0.45})`;
 
       if (isHovered && fullyAssembled) {
         opacity = 1;
-        scale = 1.4;
-        filter =
-          "brightness(1.2) contrast(1.1)";
+        scale = 1.35;
+        filter = "brightness(1.08) contrast(1.04)";
       }
 
       const node = nodeRefs.current[i];
