@@ -382,7 +382,10 @@ export function TechSphere({
   assemble = false,
 }: TechSphereProps) {
   return (
-    <div className="relative mx-auto h-[min(70vw,28rem)] w-full max-w-3xl cursor-grab active:cursor-grabbing">
+    <div
+      data-constellation-hole
+      className="relative mx-auto h-[min(70vw,28rem)] w-full max-w-3xl cursor-grab active:cursor-grabbing"
+    >
       <Canvas
         camera={{ position: [0, 0, 7.5], fov: 42 }}
         dpr={[1, 1.75]}

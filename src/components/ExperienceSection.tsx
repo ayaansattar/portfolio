@@ -56,7 +56,7 @@ const experiences: ExperienceItem[] = [
 
 export function ExperienceSection() {
   return (
-    <section id="experience" className="border-y border-ink/10 bg-highlight">
+    <section id="experience" className="border-y border-ink/10 bg-highlight/75 backdrop-blur-[1px]">
       <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10">
         <RevealLine>
           <h2 className="font-display text-4xl tracking-tight text-accent sm:text-5xl">

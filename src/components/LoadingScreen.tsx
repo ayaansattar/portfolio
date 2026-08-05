@@ -72,7 +72,7 @@ export function LoadingScreen() {
             }
           : undefined
       }
-      aria-hidden={phase === "exit" || phase === "gone"}
+      aria-hidden={phase === "exit"}
     >
       <p className="loading-screen-name font-script" aria-label={NAME}>
         {LETTERS.map((letter, index) => {

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { ExperienceSection } from "@/components/ExperienceSection";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { SiteNav } from "@/components/SiteNav";
@@ -44,8 +45,10 @@ const technologies = [
 
 export default function Home() {
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="relative flex min-h-full flex-col">
+      <ConstellationBackground />
       <LoadingScreen />
+      <div className="relative z-10 flex min-h-full flex-col">
       <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
         <div className="absolute inset-0 -z-10 animate-fade">
           <Image
@@ -58,6 +61,7 @@ export default function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#13241c]/92 via-[#13241c]/72 to-[#13241c]/35" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#13241c]/55 via-transparent to-[#13241c]/25" />
+          <ConstellationBackground mode="absolute" tone="mist" />
         </div>
 
         <SiteNav tone="light" />
@@ -150,6 +154,7 @@ export default function Home() {
           </a>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
