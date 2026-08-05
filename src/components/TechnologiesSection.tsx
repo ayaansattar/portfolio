@@ -31,7 +31,7 @@ export function TechnologiesSection({ technologies }: TechnologiesSectionProps) 
           </p>
         </RevealLine>
         <RevealLine
-          className="mt-10"
+          className="mt-12 overflow-visible"
           threshold={0.25}
           onReveal={handleSphereReveal}
         >

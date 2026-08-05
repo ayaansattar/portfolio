@@ -383,14 +383,18 @@ export function TechSphere({
   return (
     <div
       data-constellation-hole
-      className="relative mx-auto h-[min(70vw,28rem)] w-full max-w-3xl cursor-grab active:cursor-grabbing"
+      className="relative mx-auto h-[min(74vw,30rem)] w-full max-w-3xl cursor-grab overflow-visible active:cursor-grabbing"
     >
       <Canvas
-        camera={{ position: [0, 0, 7.5], fov: 42 }}
+        camera={{ position: [0, 0, 8.1], fov: 42 }}
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true }}
         className="h-full w-full touch-none"
         style={{ touchAction: "none" }}
+        onCreated={({ gl }) => {
+          const parent = gl.domElement.parentElement;
+          if (parent) parent.style.overflow = "visible";
+        }}
       >
         <ambientLight intensity={1} />
         <TechCloud technologies={technologies} assemble={assemble} />

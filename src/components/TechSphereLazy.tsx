@@ -9,7 +9,7 @@ const TechSphere = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="mx-auto flex h-[min(70vw,28rem)] w-full max-w-3xl items-center justify-center text-sm text-text-secondary">
+      <div className="mx-auto flex h-[min(74vw,30rem)] w-full max-w-3xl items-center justify-center text-sm text-text-secondary">
         Loading technologies…
       </div>
     ),
