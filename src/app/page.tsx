@@ -58,7 +58,8 @@ export default function Home() {
             <p className="animate-rise font-display text-7xl leading-none tracking-tight text-text-primary sm:text-8xl md:text-9xl">
               Ayaan
             </p>
-            <h1 className="animate-rise-delay-1 mt-6 max-w-xl font-display text-2xl leading-snug text-text-secondary italic sm:text-3xl">
+            <div className="animate-rise-delay-1 mt-5 h-px w-20 bg-accent" />
+            <h1 className="animate-rise-delay-1 mt-4 max-w-xl font-display text-2xl leading-snug text-text-secondary italic sm:text-3xl">
               Student learning to build with code.
             </h1>
             <p className="animate-rise-delay-2 mt-5 max-w-md text-base leading-relaxed text-text-secondary sm:text-lg">
@@ -74,7 +75,7 @@ export default function Home() {
               </a>
               <a
                 href="#experience"
-                className="inline-flex items-center justify-center border border-border px-6 py-3 text-sm font-medium text-text-primary transition-colors hover:border-text-secondary"
+                className="inline-flex items-center justify-center border border-border px-6 py-3 text-sm font-medium text-text-primary transition-colors hover:border-accent hover:text-accent"
               >
                 Experience
               </a>
@@ -89,6 +90,7 @@ export default function Home() {
           <h2 className="font-display text-4xl tracking-tight text-text-primary sm:text-5xl">
             Projects
           </h2>
+          <div className="mt-3 h-px w-24 bg-accent" />
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">
             Things I&apos;ve built, shipped, or am actively working on.
           </p>
@@ -106,14 +108,14 @@ export default function Home() {
                   className="group flex flex-col gap-2 py-8 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10"
                 >
                   <div>
-                    <h3 className="text-xl font-medium text-text-primary group-hover:text-text-primary">
+                    <h3 className="text-xl font-medium text-text-primary transition-colors group-hover:text-accent">
                       {project.title}
                     </h3>
                     <p className="mt-2 max-w-xl text-base leading-relaxed text-text-secondary">
                       {project.description}
                     </p>
                   </div>
-                  <p className="shrink-0 text-sm text-text-dim sm:text-right">
+                  <p className="shrink-0 text-sm text-text-dim transition-colors group-hover:text-accent sm:text-right">
                     {project.stack}
                   </p>
                 </a>
@@ -133,7 +135,7 @@ export default function Home() {
             </p>
             <a
               href="mailto:hello@example.com"
-              className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm font-medium text-text-secondary transition-colors hover:text-accent"
             >
               hello@example.com
             </a>

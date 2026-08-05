@@ -12,7 +12,7 @@ export function SiteNav() {
     <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-6 sm:px-10">
       <Link
         href="#top"
-        className="text-sm font-medium tracking-[0.18em] text-text-dim uppercase transition-colors hover:text-text-primary"
+        className="text-sm font-medium tracking-[0.18em] text-accent uppercase transition-colors hover:text-accent-hover"
       >
         Ayaan
       </Link>
@@ -21,7 +21,7 @@ export function SiteNav() {
           <a
             key={link.href}
             href={link.href}
-            className="transition-colors hover:text-text-primary"
+            className="transition-colors hover:text-accent"
           >
             {link.label}
           </a>

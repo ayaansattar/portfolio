@@ -27,6 +27,9 @@ const TONES = {
   mist: "138, 138, 130",
 } as const;
 
+// Cursor links pick up the brand orange without tinting the whole field.
+const CURSOR_LINK = "255, 107, 26";
+
 export function ConstellationBackground({
   className = "",
   mode = "fixed",
@@ -182,11 +185,11 @@ export function ConstellationBackground({
 
           if (dist < CURSOR_DISTANCE) {
             const alpha =
-              (1 - dist / CURSOR_DISTANCE) * (tone === "mist" ? 0.45 : 0.55);
+              (1 - dist / CURSOR_DISTANCE) * (tone === "mist" ? 0.4 : 0.5);
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(mouseX, mouseY);
-            ctx.strokeStyle = `rgba(${color}, ${alpha})`;
+            ctx.strokeStyle = `rgba(${CURSOR_LINK}, ${alpha})`;
             ctx.lineWidth = 1.1;
             ctx.stroke();
 

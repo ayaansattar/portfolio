@@ -23,6 +23,7 @@ export function TechnologiesSection({ technologies }: TechnologiesSectionProps) 
           <h2 className="font-display text-4xl tracking-tight text-text-primary sm:text-5xl">
             Technologies
           </h2>
+          <div className="mt-3 h-px w-24 bg-accent" />
         </RevealLine>
         <RevealLine>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">

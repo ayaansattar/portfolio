@@ -75,7 +75,7 @@ export function ExperienceSection() {
               className="relative pl-8 sm:pl-10"
             >
               <div className="absolute top-2 bottom-0 left-0 w-px bg-border-dim" />
-              <div className="absolute top-2 left-[-4px] h-2.5 w-2.5 rounded-full bg-border" />
+              <div className="absolute top-2 left-[-4px] h-2.5 w-2.5 rounded-full bg-accent" />
 
               <RevealLine>
                 <h3 className="font-display text-3xl tracking-tight text-text-primary sm:text-4xl">
@@ -112,7 +112,7 @@ export function ExperienceSection() {
                 {item.bullets.map((bullet) => (
                   <RevealLine key={bullet}>
                     <li className="flex gap-3 text-base leading-relaxed text-text-secondary">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
                       <span>{bullet}</span>
                     </li>
                   </RevealLine>
