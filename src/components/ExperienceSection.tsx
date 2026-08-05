@@ -23,13 +23,13 @@ const experiences: ExperienceItem[] = [
     ],
   },
   {
-    role: "Orientation Leader",
+    role: "Office Staff",
     org: "UMass Amherst New Student and Family Programs",
-    period: "May 2025 – Jan 2026",
+    period: "May 2026 – Present",
     location: "Amherst, MA",
     bullets: [
-      "Facilitated comprehensive campus tours and informational Q&A sessions to welcome 6,300+ students and 2,500+ family members, successfully fostering a positive transition to UMass Amherst.",
-      "Supported staff recruitment through outreach campaigns targeting prospective student leaders and peer mentors.",
+      "Managed front-line communications via Salesforce, responding to email and phone inquiries from 6,300+ students and 2,500+ family members regarding orientation logistics and program details.",
+      "Awarded Office Staff of the Year for outstanding performance and reliability.",
     ],
   },
   {
@@ -40,6 +40,16 @@ const experiences: ExperienceItem[] = [
     bullets: [
       "Served as primary contact for 30+ residents, providing academic, personal, and housing support (15–20 hrs/week).",
       "Organized 5+ community events per semester (20–25 attendees) while upholding university policies.",
+    ],
+  },
+  {
+    role: "Orientation Leader",
+    org: "UMass Amherst New Student and Family Programs",
+    period: "May 2025 – Jan 2026",
+    location: "Amherst, MA",
+    bullets: [
+      "Facilitated comprehensive campus tours and informational Q&A sessions to welcome 6,300+ students and 2,500+ family members, successfully fostering a positive transition to UMass Amherst.",
+      "Supported staff recruitment through outreach campaigns targeting prospective student leaders and peer mentors.",
     ],
   },
 ];

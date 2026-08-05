@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ExperienceSection } from "@/components/ExperienceSection";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { SiteNav } from "@/components/SiteNav";
 import { TechnologiesSection } from "@/components/TechnologiesSection";
 
@@ -44,6 +45,7 @@ const technologies = [
 export default function Home() {
   return (
     <div className="flex min-h-full flex-col">
+      <LoadingScreen />
       <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
         <div className="absolute inset-0 -z-10 animate-fade">
           <Image

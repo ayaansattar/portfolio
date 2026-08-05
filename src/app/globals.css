@@ -108,7 +108,52 @@ body {
   transform: translateY(0);
 }
 
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: var(--mist);
+  opacity: 1;
+  transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loading-screen-exit {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-screen-name {
+  margin: 0;
+  font-size: clamp(4.5rem, 14vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loading-screen-name-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .loading-screen,
+  .loading-screen-name {
+    transition: none;
+  }
+
+  .loading-screen-name {
+    opacity: 1;
+    transform: none;
+  }
+
   .reveal-line {
     opacity: 1;
     transform: none;
