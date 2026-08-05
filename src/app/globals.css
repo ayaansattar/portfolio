@@ -1,22 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #13241c;
-  --ink-soft: #3d5248;
-  --mist: #e8f0ec;
-  --paper: #f4f7f5;
-  --accent: #0f6b56;
-  --accent-hover: #0b5645;
-  --highlight: #d8ece4;
+  /* Mission Control */
+  --bg: #0b0c0e;
+  --surface: #141412;
+  --border: #3d3d38;
+  --border-dim: #2a2a26;
+  --text-primary: #d4d4d0;
+  --text-secondary: #8a8a82;
+  --text-dim: #5a5a54;
+  --accent: #ff6b1a;
+  --accent-on: #0b0c0e;
+
+  /* Compatibility aliases used across components */
+  --ink: var(--text-primary);
+  --ink-soft: var(--text-secondary);
+  --mist: var(--text-primary);
+  --paper: var(--bg);
+  --highlight: var(--surface);
+  --accent-hover: #e55f15;
 }
 
 @theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-border-dim: var(--border-dim);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-dim: var(--text-dim);
+  --color-accent: var(--accent);
+  --color-accent-on: var(--accent-on);
+  --color-accent-hover: var(--accent-hover);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-mist: var(--mist);
   --color-paper: var(--paper);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
   --color-highlight: var(--highlight);
   --font-sans: var(--font-body);
   --font-display: var(--font-newsreader);
@@ -33,9 +52,12 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  color: var(--text-primary);
   font-family: var(--font-body), system-ui, sans-serif;
+  background:
+    radial-gradient(ellipse at top, #141412 0%, #0b0c0e 70%);
+  background-attachment: fixed;
+  min-height: 100%;
 }
 
 @keyframes rise {
@@ -46,15 +68,6 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes drift {
-  from {
-    transform: scale(1.08) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(1.14) translate3d(-1.5%, -1%, 0);
   }
 }
 
@@ -81,10 +94,6 @@ body {
 
 .animate-rise-delay-3 {
   animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both;
-}
-
-.animate-drift {
-  animation: drift 18s ease-in-out alternate infinite;
 }
 
 .animate-fade {
@@ -116,8 +125,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ink);
-  color: var(--mist);
+  background: var(--bg);
+  color: var(--accent);
   opacity: 1;
   transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -176,7 +185,6 @@ body {
   .animate-rise-delay-1,
   .animate-rise-delay-2,
   .animate-rise-delay-3,
-  .animate-drift,
   .animate-fade {
     animation: none;
   }

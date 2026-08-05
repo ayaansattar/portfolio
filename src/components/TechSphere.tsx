@@ -66,7 +66,7 @@ function TechLogo({ name, src }: { name: string; src: string }) {
         img.style.display = "none";
         const fallback = document.createElement("div");
         fallback.className =
-          "flex h-5 w-5 items-center justify-center rounded-md bg-ink/10 text-[9px] font-semibold text-ink";
+          "flex h-5 w-5 items-center justify-center rounded-md bg-surface text-[9px] font-semibold text-text-primary";
         fallback.textContent = name.charAt(0);
         img.parentElement?.appendChild(fallback);
       }}
@@ -304,7 +304,7 @@ function TechCloud({
         opacity = 1;
         scale = 1.4;
         filter =
-          "brightness(1.2) contrast(1.1) drop-shadow(0 2px 10px rgba(15, 107, 86, 0.45))";
+          "brightness(1.2) contrast(1.1)";
       }
 
       const node = nodeRefs.current[i];
@@ -327,7 +327,7 @@ function TechCloud({
       <mesh ref={wireRef}>
         <sphereGeometry args={[SPHERE_RADIUS, 32, 32]} />
         <meshBasicMaterial
-          color="#0f6b56"
+          color="#3D3D38"
           wireframe
           transparent
           opacity={0}
@@ -364,7 +364,7 @@ function TechCloud({
                   ref={(node) => {
                     labelRefs.current[index] = node;
                   }}
-                  className="min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-ink opacity-0"
+                  className="min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-text-primary opacity-0"
                 >
                   {tech.name}
                 </span>
@@ -396,7 +396,7 @@ export function TechSphere({
         <ambientLight intensity={1} />
         <TechCloud technologies={technologies} assemble={assemble} />
       </Canvas>
-      <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-sm text-ink-soft">
+      <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-sm text-text-dim">
         Drag to rotate
       </p>
     </div>

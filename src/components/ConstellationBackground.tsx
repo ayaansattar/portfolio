@@ -23,8 +23,8 @@ const CURSOR_DISTANCE = 150;
 const MAX_SPECS = 90;
 
 const TONES = {
-  accent: "15, 107, 86",
-  mist: "232, 240, 236",
+  accent: "138, 138, 130", // text-secondary — quiet constellation dots
+  mist: "138, 138, 130",
 } as const;
 
 export function ConstellationBackground({

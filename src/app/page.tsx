@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { ExperienceSection } from "@/components/ExperienceSection";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -49,111 +48,97 @@ export default function Home() {
       <ConstellationBackground />
       <LoadingScreen />
       <div className="relative z-10 flex min-h-full flex-col">
-      <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
-        <div className="absolute inset-0 -z-10 animate-fade">
-          <Image
-            src="/hero.jpg"
-            alt="Laptop and coffee on a desk by a window"
-            fill
-            priority
-            sizes="100vw"
-            className="animate-drift object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#13241c]/92 via-[#13241c]/72 to-[#13241c]/35" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#13241c]/55 via-transparent to-[#13241c]/25" />
-          <ConstellationBackground mode="absolute" tone="mist" />
-        </div>
+        <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
+          <SiteNav />
 
-        <SiteNav tone="light" />
+          <main
+            id="top"
+            className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-16 pt-24 sm:px-10 sm:pb-24"
+          >
+            <p className="animate-rise font-display text-7xl leading-none tracking-tight text-text-primary sm:text-8xl md:text-9xl">
+              Ayaan
+            </p>
+            <h1 className="animate-rise-delay-1 mt-6 max-w-xl font-display text-2xl leading-snug text-text-secondary italic sm:text-3xl">
+              Student learning to build with code.
+            </h1>
+            <p className="animate-rise-delay-2 mt-5 max-w-md text-base leading-relaxed text-text-secondary sm:text-lg">
+              Projects, experience, and the tools I&apos;m learning—shared as I
+              go.
+            </p>
+            <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center gap-4">
+              <a
+                href="#projects"
+                className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-accent-on transition-colors hover:bg-accent-hover"
+              >
+                See projects
+              </a>
+              <a
+                href="#experience"
+                className="inline-flex items-center justify-center border border-border px-6 py-3 text-sm font-medium text-text-primary transition-colors hover:border-text-secondary"
+              >
+                Experience
+              </a>
+            </div>
+          </main>
+        </header>
 
-        <main
-          id="top"
-          className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-16 pt-24 sm:px-10 sm:pb-24"
+        <section
+          id="projects"
+          className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10"
         >
-          <p className="animate-rise font-display text-7xl leading-none tracking-tight text-white sm:text-8xl md:text-9xl">
-            Ayaan
+          <h2 className="font-display text-4xl tracking-tight text-text-primary sm:text-5xl">
+            Projects
+          </h2>
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">
+            Things I&apos;ve built, shipped, or am actively working on.
           </p>
-          <h1 className="animate-rise-delay-1 mt-6 max-w-xl font-display text-2xl leading-snug text-mist italic sm:text-3xl">
-            Student learning to build with code.
-          </h1>
-          <p className="animate-rise-delay-2 mt-5 max-w-md text-base leading-relaxed text-mist/85 sm:text-lg">
-            Projects, experience, and the tools I&apos;m learning—shared as I
-            go.
-          </p>
-          <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center gap-4">
+          <ul className="mt-12 divide-y divide-border-dim border-y border-border-dim">
+            {projects.map((project) => (
+              <li key={project.title}>
+                <a
+                  href={project.href}
+                  target={project.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    project.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                  className="group flex flex-col gap-2 py-8 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10"
+                >
+                  <div>
+                    <h3 className="text-xl font-medium text-text-primary group-hover:text-text-primary">
+                      {project.title}
+                    </h3>
+                    <p className="mt-2 max-w-xl text-base leading-relaxed text-text-secondary">
+                      {project.description}
+                    </p>
+                  </div>
+                  <p className="shrink-0 text-sm text-text-dim sm:text-right">
+                    {project.stack}
+                  </p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <ExperienceSection />
+
+        <TechnologiesSection technologies={technologies} />
+
+        <footer className="border-t border-border-dim">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+            <p className="text-sm text-text-dim">
+              © {new Date().getFullYear()} Ayaan
+            </p>
             <a
-              href="#projects"
-              className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+              href="mailto:hello@example.com"
+              className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
             >
-              See projects
-            </a>
-            <a
-              href="#experience"
-              className="inline-flex items-center justify-center border border-mist/40 px-6 py-3 text-sm font-medium text-mist transition-colors hover:border-white hover:text-white"
-            >
-              Experience
+              hello@example.com
             </a>
           </div>
-        </main>
-      </header>
-
-      <section
-        id="projects"
-        className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10"
-      >
-        <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
-          Projects
-        </h2>
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
-          Things I&apos;ve built, shipped, or am actively working on.
-        </p>
-        <ul className="mt-12 divide-y divide-ink/10 border-y border-ink/10">
-          {projects.map((project) => (
-            <li key={project.title}>
-              <a
-                href={project.href}
-                target={project.href.startsWith("http") ? "_blank" : undefined}
-                rel={
-                  project.href.startsWith("http")
-                    ? "noopener noreferrer"
-                    : undefined
-                }
-                className="group flex flex-col gap-2 py-8 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10"
-              >
-                <div>
-                  <h3 className="text-xl font-medium text-ink group-hover:text-accent">
-                    {project.title}
-                  </h3>
-                  <p className="mt-2 max-w-xl text-base leading-relaxed text-ink-soft">
-                    {project.description}
-                  </p>
-                </div>
-                <p className="shrink-0 text-sm text-ink-soft sm:text-right">
-                  {project.stack}
-                </p>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <ExperienceSection />
-
-      <TechnologiesSection technologies={technologies} />
-
-      <footer className="border-t border-ink/10">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10">
-          <p className="text-sm text-ink-soft">
-            © {new Date().getFullYear()} Ayaan
-          </p>
-          <a
-            href="mailto:hello@example.com"
-            className="text-sm font-medium text-ink transition-colors hover:text-accent"
-          >
-            hello@example.com
-          </a>
-        </div>
-      </footer>
+        </footer>
       </div>
     </div>
   );

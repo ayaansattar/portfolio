@@ -56,13 +56,16 @@ const experiences: ExperienceItem[] = [
 
 export function ExperienceSection() {
   return (
-    <section id="experience" className="border-y border-ink/10 bg-highlight/75 backdrop-blur-[1px]">
+    <section
+      id="experience"
+      className="border-y border-border-dim bg-surface/80"
+    >
       <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10">
         <RevealLine>
-          <h2 className="font-display text-4xl tracking-tight text-accent sm:text-5xl">
+          <h2 className="font-display text-4xl tracking-tight text-text-primary sm:text-5xl">
             Experience
           </h2>
-          <div className="mt-3 h-px w-24 bg-accent/50" />
+          <div className="mt-3 h-px w-24 bg-accent" />
         </RevealLine>
 
         <div className="mt-14 space-y-16">
@@ -71,21 +74,21 @@ export function ExperienceSection() {
               key={`${item.role}-${item.org}`}
               className="relative pl-8 sm:pl-10"
             >
-              <div className="absolute top-2 bottom-0 left-0 w-px bg-ink/20" />
-              <div className="absolute top-2 left-[-4px] h-2.5 w-2.5 rounded-full bg-accent" />
+              <div className="absolute top-2 bottom-0 left-0 w-px bg-border-dim" />
+              <div className="absolute top-2 left-[-4px] h-2.5 w-2.5 rounded-full bg-border" />
 
               <RevealLine>
-                <h3 className="font-display text-3xl tracking-tight text-accent sm:text-4xl">
+                <h3 className="font-display text-3xl tracking-tight text-text-primary sm:text-4xl">
                   {item.role}
                 </h3>
               </RevealLine>
 
               <RevealLine>
-                <p className="mt-2 text-xl text-ink">{item.org}</p>
+                <p className="mt-2 text-xl text-text-secondary">{item.org}</p>
               </RevealLine>
 
               <RevealLine>
-                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-soft">
+                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-text-dim">
                   <span className="inline-flex items-center gap-2">
                     <CalendarIcon />
                     {item.period}
@@ -108,8 +111,8 @@ export function ExperienceSection() {
               <ul className="mt-6 space-y-3">
                 {item.bullets.map((bullet) => (
                   <RevealLine key={bullet}>
-                    <li className="flex gap-3 text-base leading-relaxed text-ink-soft">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent/80" />
+                    <li className="flex gap-3 text-base leading-relaxed text-text-secondary">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
                       <span>{bullet}</span>
                     </li>
                   </RevealLine>
