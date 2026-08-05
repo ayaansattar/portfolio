@@ -1,8 +1,8 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Html, OrbitControls } from "@react-three/drei";
-import { useMemo, useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 export type Technology = {
@@ -13,6 +13,11 @@ export type Technology = {
 type TechSphereProps = {
   technologies: Technology[];
 };
+
+const SPHERE_RADIUS = 2.35;
+const HOVER_RADIUS_PX = 44;
+const DRAG_SPEED = 0.0055;
+const AUTO_SPIN = 0.07;
 
 function fibonacciSphere(count: number, radius: number) {
   if (count === 1) return [[0, radius, 0] as const];
@@ -36,81 +41,219 @@ function fibonacciSphere(count: number, radius: number) {
 }
 
 function TechLogo({ name, src }: { name: string; src: string }) {
-  const [failed, setFailed] = useState(false);
-
-  if (failed) {
-    return (
-      <div className="flex h-7 w-7 items-center justify-center rounded-md bg-ink/10 text-[10px] font-semibold text-ink">
-        {name.charAt(0)}
-      </div>
-    );
-  }
+  const failedRef = useRef(false);
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
-      alt=""
-      width={28}
-      height={28}
+      alt={name}
+      width={20}
+      height={20}
       draggable={false}
-      onError={() => setFailed(true)}
-      className="h-7 w-7 object-contain"
+      onError={(event) => {
+        if (failedRef.current) return;
+        failedRef.current = true;
+        const img = event.currentTarget;
+        img.style.display = "none";
+        const fallback = document.createElement("div");
+        fallback.className =
+          "flex h-5 w-5 items-center justify-center rounded-md bg-ink/10 text-[9px] font-semibold text-ink";
+        fallback.textContent = name.charAt(0);
+        img.parentElement?.appendChild(fallback);
+      }}
+      className="h-5 w-5 object-contain"
     />
   );
 }
 
 function TechCloud({ technologies }: { technologies: Technology[] }) {
-  const [frontIndex, setFrontIndex] = useState(0);
+  const { camera, gl } = useThree();
+  const groupRef = useRef<THREE.Group>(null);
   const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const frontRef = useRef(0);
+  const labelRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const hoveredRef = useRef<number | null>(null);
+  const draggingRef = useRef(false);
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const pointerRef = useRef({
+    x: 0,
+    y: 0,
+    inside: false,
+    buttons: 0,
+  });
+
   const camDir = useMemo(() => new THREE.Vector3(), []);
   const worldPos = useMemo(() => new THREE.Vector3(), []);
-  const toCamera = useMemo(() => new THREE.Vector3(), []);
+  const projected = useMemo(() => new THREE.Vector3(), []);
+  const axisX = useMemo(() => new THREE.Vector3(1, 0, 0), []);
+  const axisY = useMemo(() => new THREE.Vector3(0, 1, 0), []);
 
   const points = useMemo(
-    () => fibonacciSphere(technologies.length, 2.35),
+    () => fibonacciSphere(technologies.length, SPHERE_RADIUS),
     [technologies.length],
   );
 
-  useFrame(({ camera }) => {
+  useEffect(() => {
+    const canvas = gl.domElement;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      draggingRef.current = true;
+      lastPointer.current = { x: event.clientX, y: event.clientY };
+      pointerRef.current.buttons = event.buttons;
+      canvas.setPointerCapture(event.pointerId);
+      canvas.style.cursor = "grabbing";
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      pointerRef.current.x = event.clientX;
+      pointerRef.current.y = event.clientY;
+      pointerRef.current.buttons = event.buttons;
+      pointerRef.current.inside = true;
+
+      if (!draggingRef.current || !groupRef.current) return;
+
+      const dx = event.clientX - lastPointer.current.x;
+      const dy = event.clientY - lastPointer.current.y;
+      lastPointer.current = { x: event.clientX, y: event.clientY };
+
+      // Rotate the sphere itself on world axes so drag works in every direction.
+      groupRef.current.rotateOnWorldAxis(axisY, dx * DRAG_SPEED);
+      groupRef.current.rotateOnWorldAxis(axisX, dy * DRAG_SPEED);
+    };
+
+    const onPointerUp = (event: PointerEvent) => {
+      draggingRef.current = false;
+      pointerRef.current.buttons = event.buttons;
+      canvas.style.cursor =
+        hoveredRef.current === null ? "grab" : "pointer";
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    };
+
+    const onPointerLeave = () => {
+      pointerRef.current.inside = false;
+    };
+
+    canvas.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointerleave", onPointerLeave);
+
+    return () => {
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointerleave", onPointerLeave);
+    };
+  }, [axisX, axisY, gl]);
+
+  useFrame((_, delta) => {
+    const group = groupRef.current;
+    if (!group) return;
+
+    if (!draggingRef.current && hoveredRef.current === null) {
+      group.rotateOnWorldAxis(axisY, delta * AUTO_SPIN);
+    }
+
+    group.updateWorldMatrix(true, false);
     camera.getWorldDirection(camDir);
 
     let bestIndex = 0;
-    let bestFacing = -Infinity;
+    let bestFrontness = -Infinity;
 
     for (let i = 0; i < points.length; i += 1) {
       const [x, y, z] = points[i];
-      worldPos.set(x, y, z);
-      toCamera.copy(worldPos).sub(camera.position).normalize();
-      const facing = toCamera.dot(camDir);
+      worldPos.set(x, y, z).applyMatrix4(group.matrixWorld);
+      const frontness = -worldPos.dot(camDir) / SPHERE_RADIUS;
 
-      const t = (facing + 1) / 2;
-      const opacity = 0.22 + t * 0.78;
-      const brightness = 0.35 + t * 0.65;
-
-      const node = nodeRefs.current[i];
-      if (node) {
-        node.style.opacity = String(opacity);
-        node.style.filter = `brightness(${brightness})`;
-      }
-
-      if (facing > bestFacing) {
-        bestFacing = facing;
+      if (frontness > bestFrontness) {
+        bestFrontness = frontness;
         bestIndex = i;
       }
     }
 
-    if (bestIndex !== frontRef.current) {
-      frontRef.current = bestIndex;
-      setFrontIndex(bestIndex);
+    const rect = gl.domElement.getBoundingClientRect();
+    const pointer = pointerRef.current;
+    let hovered: number | null = null;
+
+    const insideCanvas =
+      pointer.inside &&
+      pointer.x >= rect.left &&
+      pointer.x <= rect.right &&
+      pointer.y >= rect.top &&
+      pointer.y <= rect.bottom;
+
+    if (insideCanvas && !draggingRef.current) {
+      let bestDistance = HOVER_RADIUS_PX;
+
+      for (let i = 0; i < points.length; i += 1) {
+        const [x, y, z] = points[i];
+        worldPos.set(x, y, z).applyMatrix4(group.matrixWorld);
+        const frontness = -worldPos.dot(camDir) / SPHERE_RADIUS;
+        if (frontness < -0.05) continue;
+
+        projected.copy(worldPos).project(camera);
+        if (projected.z > 1) continue;
+
+        const screenX = (projected.x * 0.5 + 0.5) * rect.width + rect.left;
+        const screenY = (-projected.y * 0.5 + 0.5) * rect.height + rect.top;
+        const distance = Math.hypot(screenX - pointer.x, screenY - pointer.y);
+
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          hovered = i;
+        }
+      }
+    }
+
+    if (hoveredRef.current !== hovered) {
+      hoveredRef.current = hovered;
+      if (!draggingRef.current) {
+        gl.domElement.style.cursor = hovered === null ? "grab" : "pointer";
+      }
+    }
+
+    for (let i = 0; i < points.length; i += 1) {
+      const [x, y, z] = points[i];
+      worldPos.set(x, y, z).applyMatrix4(group.matrixWorld);
+      const frontness = -worldPos.dot(camDir) / SPHERE_RADIUS;
+      const depth = Math.pow((frontness + 1) / 2, 2.4);
+      const isFront = i === bestIndex;
+      const isHovered = i === hovered;
+
+      let opacity = isFront ? 1 : 0.08 + depth * 0.72;
+      let scale = 1;
+      let filter = isFront
+        ? "brightness(1.08) contrast(1.05)"
+        : `brightness(${0.18 + depth * 0.62})`;
+
+      if (isHovered) {
+        opacity = 1;
+        scale = 1.4;
+        filter =
+          "brightness(1.2) contrast(1.1) drop-shadow(0 2px 10px rgba(15, 107, 86, 0.45))";
+      }
+
+      const node = nodeRefs.current[i];
+      if (node) {
+        node.style.opacity = String(opacity);
+        node.style.filter = filter;
+        node.style.transform = `scale(${scale})`;
+      }
+
+      const label = labelRefs.current[i];
+      if (label) {
+        label.style.opacity = isFront || isHovered ? "1" : "0";
+      }
     }
   });
 
   return (
-    <group>
+    <group ref={groupRef}>
       <mesh>
-        <sphereGeometry args={[2.35, 32, 32]} />
+        <sphereGeometry args={[SPHERE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color="#0f6b56"
           wireframe
@@ -127,19 +270,21 @@ function TechCloud({ technologies }: { technologies: Technology[] }) {
           transform
           sprite
           distanceFactor={8.5}
+          wrapperClass="tech-html"
           style={{ pointerEvents: "none" }}
         >
           <div
             ref={(node) => {
               nodeRefs.current[index] = node;
             }}
-            className="flex w-14 flex-col items-center gap-0.5"
+            className="pointer-events-none flex w-12 flex-col items-center gap-0.5"
           >
             <TechLogo name={tech.name} src={tech.logo} />
             <span
-              className={`min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-ink transition-opacity duration-150 ${
-                index === frontIndex ? "opacity-100" : "opacity-0"
-              }`}
+              ref={(node) => {
+                labelRefs.current[index] = node;
+              }}
+              className="min-h-4 text-center text-[10px] leading-tight font-medium tracking-wide text-ink opacity-0"
             >
               {tech.name}
             </span>
@@ -158,21 +303,10 @@ export function TechSphere({ technologies }: TechSphereProps) {
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true }}
         className="h-full w-full touch-none"
+        style={{ touchAction: "none" }}
       >
         <ambientLight intensity={1} />
         <TechCloud technologies={technologies} />
-        <OrbitControls
-          makeDefault
-          enableZoom={false}
-          enablePan={false}
-          enableDamping
-          dampingFactor={0.08}
-          rotateSpeed={0.55}
-          autoRotate
-          autoRotateSpeed={0.55}
-          minPolarAngle={0.35}
-          maxPolarAngle={Math.PI - 0.35}
-        />
       </Canvas>
       <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-sm text-ink-soft">
         Drag to rotate

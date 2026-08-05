@@ -90,6 +90,11 @@ body {
   animation: fade-in 1.2s ease both;
 }
 
+.tech-html,
+.tech-html * {
+  pointer-events: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-rise,
   .animate-rise-delay-1,
