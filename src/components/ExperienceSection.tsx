@@ -16,6 +16,7 @@ const experiences: ExperienceItem[] = [
     role: "Front-End Engineer",
     org: "No Bad Days Club — Gamified travel and experiences",
     period: "Nov 2025 – Present",
+    location: "Remote",
     bullets: [
       "Collaborated with cross-functional teams to build a multi-page marketing site using Next.js 14, React 18, TypeScript, and Tailwind CSS for consumer and partner audiences, increasing user engagement by 73%.",
       "Implemented responsive, mobile-first layouts and optimized performance with image optimization, custom font loading, and smooth navigation.",
