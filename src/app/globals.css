@@ -20,6 +20,7 @@
   --color-highlight: var(--highlight);
   --font-sans: var(--font-body);
   --font-display: var(--font-newsreader);
+  --font-script: var(--font-great-vibes);
 }
 
 * {
@@ -118,7 +119,7 @@ body {
   background: var(--ink);
   color: var(--mist);
   opacity: 1;
-  transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .loading-screen-exit {
@@ -128,28 +129,39 @@ body {
 
 .loading-screen-name {
   margin: 0;
-  font-size: clamp(4.5rem, 14vw, 9rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-  opacity: 0;
-  transform: translateY(1.25rem);
-  transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  font-size: clamp(5rem, 18vw, 11rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-weight: 400;
 }
 
-.loading-screen-name-visible {
+.loading-screen-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(1.6rem);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loading-screen-letter-in {
   opacity: 1;
   transform: translateY(0);
 }
 
+.loading-screen-letter-out {
+  opacity: 0;
+  transform: translateY(-1.6rem);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loading-screen,
-  .loading-screen-name {
+  .loading-screen-letter {
     transition: none;
   }
 
-  .loading-screen-name {
+  .loading-screen-letter {
     opacity: 1;
     transform: none;
   }
