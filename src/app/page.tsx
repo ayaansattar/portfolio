@@ -1,9 +1,53 @@
 import Image from "next/image";
+import { SiteNav } from "@/components/SiteNav";
+import { TechSphereLazy } from "@/components/TechSphereLazy";
+
+const projects = [
+  {
+    title: "Portfolio website",
+    description:
+      "Personal site built with Next.js and Tailwind, deployed on Vercel.",
+    href: "https://github.com/ayaansattar/portfolio",
+    stack: "Next.js · Tailwind · Vercel",
+  },
+  {
+    title: "Project coming soon",
+    description: "A placeholder for the next thing I'm shipping.",
+    href: "#projects",
+    stack: "TBD",
+  },
+];
+
+const experiences = [
+  {
+    role: "Student",
+    org: "Learning software development",
+    period: "Present",
+    detail:
+      "Building foundations in programming, web development, and shipping personal projects.",
+  },
+];
+
+const technologies = [
+  "Python",
+  "JavaScript",
+  "TypeScript",
+  "HTML",
+  "CSS",
+  "Next.js",
+  "React",
+  "Tailwind CSS",
+  "Git",
+  "Vercel",
+  "APIs",
+  "Databases",
+  "Testing",
+];
 
 export default function Home() {
   return (
     <div className="flex min-h-full flex-col">
-      <header className="relative isolate min-h-svh overflow-hidden">
+      <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
         <div className="absolute inset-0 -z-10 animate-fade">
           <Image
             src="/hero.jpg"
@@ -17,22 +61,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#13241c]/55 via-transparent to-[#13241c]/25" />
         </div>
 
-        <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
-          <a
-            href="#top"
-            className="text-sm font-medium tracking-[0.18em] text-mist uppercase"
-          >
-            Portfolio
-          </a>
-          <div className="flex items-center gap-6 text-sm text-mist/90">
-            <a href="#about" className="transition-colors hover:text-white">
-              About
-            </a>
-            <a href="#contact" className="transition-colors hover:text-white">
-              Contact
-            </a>
-          </div>
-        </nav>
+        <SiteNav tone="light" />
 
         <main
           id="top"
@@ -45,65 +74,127 @@ export default function Home() {
             Student learning to build with code.
           </h1>
           <p className="animate-rise-delay-2 mt-5 max-w-md text-base leading-relaxed text-mist/85 sm:text-lg">
-            I&apos;m exploring software development—turning curiosity into
-            projects, one page at a time.
+            Projects, experience, and the tools I&apos;m learning—shared as I
+            go.
           </p>
           <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center gap-4">
             <a
-              href="#about"
+              href="#projects"
               className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
             >
-              About me
+              See projects
             </a>
             <a
-              href="#contact"
+              href="#experience"
               className="inline-flex items-center justify-center border border-mist/40 px-6 py-3 text-sm font-medium text-mist transition-colors hover:border-white hover:text-white"
             >
-              Get in touch
+              Experience
             </a>
           </div>
         </main>
       </header>
 
       <section
-        id="about"
+        id="projects"
         className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10"
       >
         <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
-          About
+          Projects
         </h2>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft">
-          I&apos;m a student and aspiring software developer. This site is
-          where I&apos;ll share what I&apos;m building as I learn—starting
-          small, shipping often, and getting better with every project.
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
+          Things I&apos;ve built, shipped, or am actively working on.
         </p>
+        <ul className="mt-12 divide-y divide-ink/10 border-y border-ink/10">
+          {projects.map((project) => (
+            <li key={project.title}>
+              <a
+                href={project.href}
+                target={project.href.startsWith("http") ? "_blank" : undefined}
+                rel={
+                  project.href.startsWith("http")
+                    ? "noopener noreferrer"
+                    : undefined
+                }
+                className="group flex flex-col gap-2 py-8 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10"
+              >
+                <div>
+                  <h3 className="text-xl font-medium text-ink group-hover:text-accent">
+                    {project.title}
+                  </h3>
+                  <p className="mt-2 max-w-xl text-base leading-relaxed text-ink-soft">
+                    {project.description}
+                  </p>
+                </div>
+                <p className="shrink-0 text-sm text-ink-soft sm:text-right">
+                  {project.stack}
+                </p>
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section
-        id="contact"
-        className="border-t border-ink/10 bg-highlight"
+        id="experience"
+        className="border-y border-ink/10 bg-highlight"
       >
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-20 sm:flex-row sm:items-end sm:justify-between sm:px-10">
-          <div>
-            <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
-              Let&apos;s talk
-            </h2>
-            <p className="mt-4 max-w-md text-lg leading-relaxed text-ink-soft">
-              Open to learning opportunities, collaborations, and conversations
-              about code.
-            </p>
-          </div>
+        <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10">
+          <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
+            Experience
+          </h2>
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
+            Roles, school, and anything that shaped how I work.
+          </p>
+          <ol className="mt-12 space-y-10">
+            {experiences.map((item) => (
+              <li
+                key={`${item.role}-${item.org}`}
+                className="grid gap-3 sm:grid-cols-[8rem_1fr] sm:gap-10"
+              >
+                <p className="text-sm font-medium tracking-wide text-ink-soft uppercase">
+                  {item.period}
+                </p>
+                <div>
+                  <h3 className="text-xl font-medium text-ink">{item.role}</h3>
+                  <p className="mt-1 text-base text-accent">{item.org}</p>
+                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-soft">
+                    {item.detail}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section
+        id="technologies"
+        className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10"
+      >
+        <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
+          Technologies
+        </h2>
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
+          Drag the sphere to explore the tools I use and what I&apos;m learning
+          next.
+        </p>
+        <div className="mt-10">
+          <TechSphereLazy technologies={technologies} />
+        </div>
+      </section>
+
+      <footer className="border-t border-ink/10">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+          <p className="text-sm text-ink-soft">
+            © {new Date().getFullYear()} Ayaan
+          </p>
           <a
             href="mailto:hello@example.com"
-            className="inline-flex items-center justify-center bg-ink px-6 py-3 text-sm font-medium text-paper transition-opacity hover:opacity-90"
+            className="text-sm font-medium text-ink transition-colors hover:text-accent"
           >
             hello@example.com
           </a>
         </div>
-      </section>
-
-      <footer className="mx-auto w-full max-w-6xl px-6 py-8 text-sm text-ink-soft sm:px-10">
-        © {new Date().getFullYear()} Ayaan
       </footer>
     </div>
   );

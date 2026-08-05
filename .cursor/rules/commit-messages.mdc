@@ -1,0 +1,13 @@
+---
+description: Conventional commit prefixes for this repo
+alwaysApply: true
+---
+
+# Commit messages
+
+Use these prefixes:
+
+- `feat:` when introducing a new feature
+- `fix:` when fixing an existing feature
+
+Keep messages brief. Name the main feature or change in that commit — skip extra detail and side notes.
