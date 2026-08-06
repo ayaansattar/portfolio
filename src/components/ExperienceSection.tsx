@@ -1,6 +1,7 @@
 "use client";
 
 import { RevealLine } from "@/components/RevealLine";
+import { SitePreviewRow } from "@/components/SitePreview";
 
 type ExperienceItem = {
   role: string;
@@ -8,6 +9,8 @@ type ExperienceItem = {
   period: string;
   location?: string;
   mode?: string;
+  website?: string;
+  demos?: Array<{ src: string; label: string; url: string }>;
   bullets: string[];
 };
 
@@ -17,6 +20,24 @@ const experiences: ExperienceItem[] = [
     org: "No Bad Days Club — Gamified travel and experiences",
     period: "Nov 2025 – Present",
     location: "Remote",
+    website: "https://www.nobaddaysclub.com/",
+    demos: [
+      {
+        src: "/experience/NBDC_landing.mp4",
+        label: "Landing",
+        url: "https://www.nobaddaysclub.com/",
+      },
+      {
+        src: "/experience/NBDC_partners.mp4",
+        label: "Partners",
+        url: "https://www.nobaddaysclub.com/",
+      },
+      {
+        src: "/experience/NBDC.mp4",
+        label: "Product",
+        url: "https://www.nobaddaysclub.com/",
+      },
+    ],
     bullets: [
       "Collaborated with cross-functional teams to build a multi-page marketing site using Next.js 14, React 18, TypeScript, and Tailwind CSS for consumer and partner audiences, increasing user engagement by 73%.",
       "Implemented responsive, mobile-first layouts and optimized performance with image optimization, custom font loading, and smooth navigation.",
@@ -119,6 +140,12 @@ export function ExperienceSection() {
                   </RevealLine>
                 ))}
               </ul>
+
+              {item.demos?.length ? (
+                <RevealLine className="overflow-visible" threshold={0.1}>
+                  <SitePreviewRow demos={item.demos} />
+                </RevealLine>
+              ) : null}
             </article>
           ))}
         </div>
