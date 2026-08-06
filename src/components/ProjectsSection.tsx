@@ -25,16 +25,21 @@ const projects: ProjectItem[] = [
     description:
       "A full-stack Spotify management platform with OAuth, hourly playlist sync, and a SQLite history layer — deployed with Docker Compose and GitHub Actions. Resolves duplicate tracks by ISRC/title, mixes playlists with a weighted shuffle (batched for Spotify’s API limits), and uses Gemini to flag misfiled songs against your playlist intents.",
     stack: "Next.js · TypeScript · NextAuth · Prisma · SQLite · Docker · Gemini API",
+    href: "https://fixspotify.duckdns.org",
     github: "https://github.com/ayaansattar/FixSpotify",
+    video: "/projects/FixSpotify.mp4",
   },
   {
     number: "02",
-    title: "Project Two",
-    tagline: "Short hook for what this does.",
+    title: "OneStopProf",
+    tagline: "RAG course-planning assistant grounded in Rate My Professors reviews.",
     description:
-      "Swap this blurp for the real story — problem, what you built, and the outcome.",
-    stack: "React · Expo · Firebase",
-    href: "#projects",
+      "Scrapes Rate My Professors via GraphQL, embeds reviews locally with sentence-transformers, and stores vectors in ChromaDB for semantic search. Course- and professor-aware filters (e.g. CS220) narrow evidence for recommendations and Q&A, then Groq’s Llama 3.3 returns cited answers in a multi-mode Streamlit app.",
+    stack:
+      "Python · Streamlit · ChromaDB · Groq API · sentence-transformers · httpx",
+    href: "https://onestopprof.streamlit.app/",
+    github: "https://github.com/ayaansattar/OneStopProf",
+    video: "/projects/OneStopProf.mp4",
   },
   {
     number: "03",
@@ -115,7 +120,7 @@ export function ProjectsSection() {
                 </p>
               </RevealLine>
               <RevealLine>
-                <p className="mt-6 text-sm tracking-wide text-text-dim">
+                <p className="mt-6 text-base tracking-wide text-text-dim">
                   {project.stack}
                 </p>
               </RevealLine>
@@ -165,37 +170,36 @@ export function ProjectsSection() {
 }
 
 function ProjectMedia({ project }: { project: ProjectItem }) {
-  if (project.video) {
-    return (
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface">
-        <video
-          src={project.video}
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-        />
-      </div>
-    );
+  const link = project.href || project.github;
+  let chromeLabel = project.title;
+  if (project.href) {
+    try {
+      const parsed = new URL(project.href);
+      chromeLabel = parsed.host;
+    } catch {
+      chromeLabel = project.href;
+    }
   }
 
-  if (project.image) {
-    return (
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={project.image}
-          alt={`${project.title} preview`}
-          className="absolute inset-0 h-full w-full object-cover object-top"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative flex aspect-[16/10] w-full items-end overflow-hidden bg-surface px-6 py-5">
+  const media = project.video ? (
+    <video
+      src={project.video}
+      className="absolute inset-0 h-full w-full scale-[1.1] object-cover object-[center_18%]"
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+    />
+  ) : project.image ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={project.image}
+      alt={`${project.title} preview`}
+      className="absolute inset-0 h-full w-full object-cover object-top"
+    />
+  ) : (
+    <>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-40"
@@ -204,9 +208,50 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
             "linear-gradient(135deg, transparent 40%, rgba(255,107,26,0.12) 100%), radial-gradient(ellipse at 20% 0%, rgba(212,212,208,0.08), transparent 55%)",
         }}
       />
-      <p className="relative text-xs tracking-[0.18em] text-text-dim uppercase">
+      <p className="absolute bottom-5 left-6 text-xs tracking-[0.18em] text-text-dim uppercase">
         Add preview — /public/projects/{project.number.toLowerCase()}
       </p>
+    </>
+  );
+
+  return (
+    <div className="overflow-hidden rounded-2xl bg-surface">
+      <div className="flex items-center gap-2 px-3 py-2.5 sm:gap-3">
+        <div className="flex shrink-0 gap-1.5" aria-hidden="true">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#5a5a54]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#5a5a54]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-accent/80" />
+        </div>
+        <div className="min-w-0 flex-1 truncate bg-bg px-3 py-1 text-xs text-text-dim">
+          {chromeLabel}
+        </div>
+        {link ? (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-xs font-medium text-accent transition-colors hover:text-accent-hover"
+          >
+            Open ↗
+          </a>
+        ) : null}
+      </div>
+
+      {link ? (
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative block aspect-[16/10] w-full overflow-hidden bg-bg"
+          aria-label={`Open ${project.title}`}
+        >
+          {media}
+        </a>
+      ) : (
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-bg">
+          {media}
+        </div>
+      )}
     </div>
   );
 }
