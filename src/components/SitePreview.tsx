@@ -6,14 +6,14 @@ type SitePreviewProps = {
 
 export function SitePreview({ url, video, label }: SitePreviewProps) {
   return (
-    <div className="min-w-0 overflow-hidden border border-border-dim bg-bg">
-      <div className="flex items-center gap-2 border-b border-border-dim bg-surface px-2 py-2 sm:gap-3 sm:px-3">
+    <div className="min-w-0 overflow-hidden bg-bg">
+      <div className="flex items-center gap-2 bg-surface px-2 py-2 sm:gap-3 sm:px-3">
         <div className="flex shrink-0 gap-1 sm:gap-1.5" aria-hidden="true">
           <span className="h-2 w-2 rounded-full bg-[#5a5a54] sm:h-2.5 sm:w-2.5" />
           <span className="h-2 w-2 rounded-full bg-[#5a5a54] sm:h-2.5 sm:w-2.5" />
           <span className="h-2 w-2 rounded-full bg-accent/80 sm:h-2.5 sm:w-2.5" />
         </div>
-        <div className="min-w-0 flex-1 truncate border border-border-dim bg-bg px-2 py-0.5 text-[10px] text-text-dim sm:px-3 sm:py-1 sm:text-xs">
+        <div className="min-w-0 flex-1 truncate bg-bg px-2 py-0.5 text-[10px] text-text-dim sm:px-3 sm:py-1 sm:text-xs">
           {label}
         </div>
         <a
@@ -30,12 +30,12 @@ export function SitePreview({ url, video, label }: SitePreviewProps) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="group relative block aspect-[16/10] w-full overflow-hidden bg-surface"
+        className="group relative block aspect-video w-full overflow-hidden bg-surface"
         aria-label={`Open ${label} demo`}
       >
         <video
           src={video}
-          className="h-full w-full object-cover object-top"
+          className="absolute inset-0 h-full w-full scale-[1.08] object-cover"
           autoPlay
           muted
           loop
