@@ -1,24 +1,9 @@
 import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { ExperienceSection } from "@/components/ExperienceSection";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { ProjectsSection } from "@/components/ProjectsSection";
 import { SiteNav } from "@/components/SiteNav";
 import { TechnologiesSection } from "@/components/TechnologiesSection";
-
-const projects = [
-  {
-    title: "Portfolio website",
-    description:
-      "Personal site built with Next.js and Tailwind, deployed on Vercel.",
-    href: "https://github.com/ayaansattar/portfolio",
-    stack: "Next.js · Tailwind · Vercel",
-  },
-  {
-    title: "Project coming soon",
-    description: "A placeholder for the next thing I'm shipping.",
-    href: "#projects",
-    stack: "TBD",
-  },
-];
 
 const technologies = [
   { name: "Python", logo: "/tech/python.svg" },
@@ -83,46 +68,7 @@ export default function Home() {
           </main>
         </header>
 
-        <section
-          id="projects"
-          className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10"
-        >
-          <h2 className="font-display text-4xl tracking-tight text-text-primary sm:text-5xl">
-            Projects
-          </h2>
-          <div className="mt-3 h-px w-24 bg-accent" />
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">
-            Things I&apos;ve built, shipped, or am actively working on.
-          </p>
-          <ul className="mt-12 divide-y divide-border-dim border-y border-border-dim">
-            {projects.map((project) => (
-              <li key={project.title}>
-                <a
-                  href={project.href}
-                  target={project.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    project.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  className="group flex flex-col gap-2 py-8 transition-colors sm:flex-row sm:items-baseline sm:justify-between sm:gap-10"
-                >
-                  <div>
-                    <h3 className="text-xl font-medium text-text-primary transition-colors group-hover:text-accent">
-                      {project.title}
-                    </h3>
-                    <p className="mt-2 max-w-xl text-base leading-relaxed text-text-secondary">
-                      {project.description}
-                    </p>
-                  </div>
-                  <p className="shrink-0 text-sm text-text-dim transition-colors group-hover:text-accent sm:text-right">
-                    {project.stack}
-                  </p>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <ProjectsSection />
 
         <ExperienceSection />
 
