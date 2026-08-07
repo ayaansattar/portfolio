@@ -75,6 +75,83 @@ body {
   animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both;
 }
 
+@keyframes hero-rocket-across {
+  0% {
+    transform: translate3d(-15vw, 22vh, 0) rotate(-28deg);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(115vw, -30vh, 0) rotate(-28deg);
+    opacity: 0;
+  }
+}
+
+@keyframes hero-rocket-liftoff {
+  0% {
+    transform: translate3d(0, 110vh, 0) rotate(-90deg) scale(0.85);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(8vw, -25vh, 0) rotate(-90deg) scale(1.05);
+    opacity: 0;
+  }
+}
+
+@keyframes hero-jet-flicker {
+  0%,
+  100% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scaleX(1.18) scaleY(0.88);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scaleX(0.92) scaleY(1.08);
+    opacity: 0.95;
+  }
+}
+
+.hero-rocket {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+.hero-rocket-across {
+  left: 0;
+  animation-name: hero-rocket-across;
+}
+
+.hero-rocket-liftoff {
+  bottom: 0;
+  animation-name: hero-rocket-liftoff;
+}
+
+.hero-rocket-jet {
+  transform-origin: 28px 18px;
+  animation: hero-jet-flicker 0.22s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rockets {
+    display: none;
+  }
+}
+
 .tech-html,
 .tech-html * {
   pointer-events: none !important;

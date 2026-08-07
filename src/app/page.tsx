@@ -1,5 +1,6 @@
 import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { ExperienceSection } from "@/components/ExperienceSection";
+import { HeroRockets } from "@/components/HeroRockets";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { SiteNav } from "@/components/SiteNav";
@@ -35,28 +36,31 @@ export default function Home() {
       <LoadingScreen />
       <div className="relative z-10 flex min-h-full flex-col">
         <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
-          <SiteNav />
+          <HeroRockets />
+          <div className="relative z-10 flex min-h-svh flex-col">
+            <SiteNav />
 
-          <main
-            id="top"
-            className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-6 pb-16 pt-8 text-center sm:px-10"
-          >
-            <p className="animate-rise font-display text-7xl leading-none tracking-tight text-text-primary sm:text-8xl md:text-9xl">
-              Ayaan
-            </p>
-            <div className="animate-rise-delay-1 mt-5 h-px w-20 bg-accent" />
-            <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-accent-on transition-colors hover:bg-accent-hover"
-              >
-                Résumé
-              </a>
-              <SocialLinks variant="hero" />
-            </div>
-          </main>
+            <main
+              id="top"
+              className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-6 pb-16 pt-8 text-center sm:px-10"
+            >
+              <p className="animate-rise font-display text-7xl leading-none tracking-tight text-text-primary sm:text-8xl md:text-9xl">
+                Ayaan
+              </p>
+              <div className="animate-rise-delay-1 mt-5 h-px w-20 bg-accent" />
+              <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-accent-on transition-colors hover:bg-accent-hover"
+                >
+                  Résumé
+                </a>
+                <SocialLinks variant="hero" />
+              </div>
+            </main>
+          </div>
         </header>
 
         <ProjectsSection />

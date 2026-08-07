@@ -376,6 +376,72 @@ function TechCloud({
   );
 }
 
+const ORBIT_RADIUS = SPHERE_RADIUS * 1.32;
+const ORBIT_SPEED = 0.55;
+
+function OrbitingSatellite({ active }: { active: boolean }) {
+  const ref = useRef<THREE.Group>(null);
+  const angle = useRef(0);
+  const fade = useRef(0);
+
+  useFrame((_, delta) => {
+    const group = ref.current;
+    if (!group) return;
+
+    fade.current = THREE.MathUtils.clamp(
+      fade.current + (active ? delta * 0.9 : -delta),
+      0,
+      1,
+    );
+    group.visible = fade.current > 0.02;
+
+    if (!active && fade.current <= 0.02) return;
+
+    // Flat circle in the XY plane (facing the camera) — reads as a 2D loop around the sphere.
+    angle.current += delta * ORBIT_SPEED;
+    const a = angle.current;
+    const x = Math.cos(a) * ORBIT_RADIUS;
+    const y = Math.sin(a) * ORBIT_RADIUS;
+    group.position.set(x, y, 0);
+
+    // Keep the craft tangent to the circle (nose leads the path).
+    group.rotation.set(0, 0, a + Math.PI / 2);
+
+    group.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        const material = child.material as THREE.MeshBasicMaterial;
+        material.transparent = true;
+        material.opacity = fade.current;
+      }
+    });
+  });
+
+  return (
+    <group ref={ref} visible={false}>
+      <mesh>
+        <boxGeometry args={[0.26, 0.14, 0.18]} />
+        <meshBasicMaterial color="#D4D4D0" />
+      </mesh>
+      <mesh position={[0, -0.3, 0]}>
+        <boxGeometry args={[0.2, 0.32, 0.02]} />
+        <meshBasicMaterial color="#FF6B1A" />
+      </mesh>
+      <mesh position={[0, 0.3, 0]}>
+        <boxGeometry args={[0.2, 0.32, 0.02]} />
+        <meshBasicMaterial color="#FF6B1A" />
+      </mesh>
+      <mesh position={[0.12, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.07, 0.05, 0.03, 14]} />
+        <meshBasicMaterial color="#8A8A82" />
+      </mesh>
+      <mesh position={[0.18, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.01, 0.01, 0.1, 6]} />
+        <meshBasicMaterial color="#5A5A54" />
+      </mesh>
+    </group>
+  );
+}
+
 export function TechSphere({
   technologies,
   assemble = false,
@@ -386,7 +452,7 @@ export function TechSphere({
       className="relative mx-auto h-[min(74vw,30rem)] w-full max-w-3xl cursor-grab overflow-visible active:cursor-grabbing"
     >
       <Canvas
-        camera={{ position: [0, 0, 8.1], fov: 42 }}
+        camera={{ position: [0, 0, 9.2], fov: 42 }}
         dpr={[1, 1.75]}
         gl={{ antialias: true, alpha: true }}
         className="h-full w-full touch-none"
@@ -398,6 +464,7 @@ export function TechSphere({
       >
         <ambientLight intensity={1} />
         <TechCloud technologies={technologies} assemble={assemble} />
+        <OrbitingSatellite active={assemble} />
       </Canvas>
       <p className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-sm text-text-dim">
         Drag to rotate
