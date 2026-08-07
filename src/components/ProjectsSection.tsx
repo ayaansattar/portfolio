@@ -12,6 +12,8 @@ type ProjectItem = {
   github?: string;
   image?: string;
   video?: string;
+  /** browser = desktop chrome (default), mobile = phone bezel */
+  frame?: "browser" | "mobile";
 };
 
 const projects: ProjectItem[] = [
@@ -46,6 +48,9 @@ const projects: ProjectItem[] = [
       "Team-built React Native app with @umass.edu-restricted Supabase auth and dynamic event filtering across campus. A FastAPI pipeline scrapes and syncs events every two hours (paginated API, SQLite dedup, under 10s sync latency). Regex location parsing mapped 50+ buildings and 30+ raw event types into 10 categories, cutting parsing errors by 90%.",
     stack:
       "React Native · TypeScript · Expo · FastAPI · Python · Supabase · SQLite",
+    github: "https://github.com/ayaansattar/UAppen",
+    video: "/projects/UAppen.mp4",
+    frame: "mobile",
   },
 ];
 
@@ -112,7 +117,11 @@ export function ProjectsSection() {
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-text-secondary transition-colors hover:text-accent"
+                        className={
+                          project.href
+                            ? "text-text-secondary transition-colors hover:text-accent"
+                            : "text-accent transition-colors hover:text-accent-hover"
+                        }
                       >
                         GitHub ↗
                       </a>
@@ -141,6 +150,8 @@ export function ProjectsSection() {
 
 function ProjectMedia({ project }: { project: ProjectItem }) {
   const link = project.href || project.github;
+  const isMobile = project.frame === "mobile";
+
   let chromeLabel = project.title;
   if (project.href) {
     try {
@@ -154,7 +165,11 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
   const media = project.video ? (
     <video
       src={project.video}
-      className="absolute inset-0 h-full w-full scale-[1.1] object-cover object-[center_18%]"
+      className={
+        isMobile
+          ? "absolute inset-0 h-full w-full object-cover"
+          : "absolute inset-0 h-full w-full scale-[1.1] object-cover object-[center_18%]"
+      }
       autoPlay
       muted
       loop
@@ -183,6 +198,40 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
       </p>
     </>
   );
+
+  if (isMobile) {
+    const phoneBody = (
+      <div className="relative mx-auto w-full max-w-[260px] sm:max-w-[280px]">
+        <div className="relative overflow-hidden rounded-[2rem] border border-border bg-[#0B0C0E] p-2 sm:rounded-[2.25rem] sm:p-2.5">
+          <div
+            aria-hidden="true"
+            className="absolute top-3 left-1/2 z-20 h-5 w-20 -translate-x-1/2 rounded-full bg-[#0B0C0E] sm:top-3.5 sm:h-6 sm:w-24"
+          />
+          <div className="relative aspect-[9/19.5] overflow-hidden rounded-[1.5rem] bg-surface sm:rounded-[1.75rem]">
+            {media}
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <div className="flex min-h-[28rem] items-center justify-center py-2 sm:min-h-[32rem]">
+        {link ? (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full max-w-[280px] transition-opacity hover:opacity-95"
+            aria-label={`Open ${project.title}`}
+          >
+            {phoneBody}
+          </a>
+        ) : (
+          phoneBody
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-2xl bg-surface">
