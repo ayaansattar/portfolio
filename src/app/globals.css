@@ -11,13 +11,6 @@
   --text-dim: #5a5a54;
   --accent: #ff6b1a;
   --accent-on: #0b0c0e;
-
-  /* Compatibility aliases used across components */
-  --ink: var(--text-primary);
-  --ink-soft: var(--text-secondary);
-  --mist: var(--text-primary);
-  --paper: var(--bg);
-  --highlight: var(--surface);
   --accent-hover: #e55f15;
 }
 
@@ -32,11 +25,6 @@
   --color-accent: var(--accent);
   --color-accent-on: var(--accent-on);
   --color-accent-hover: var(--accent-hover);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-mist: var(--mist);
-  --color-paper: var(--paper);
-  --color-highlight: var(--highlight);
   --font-sans: var(--font-body);
   --font-display: var(--font-newsreader);
   --font-script: var(--font-great-vibes);
@@ -71,15 +59,6 @@ body {
   }
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .animate-rise {
   animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -94,10 +73,6 @@ body {
 
 .animate-rise-delay-3 {
   animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both;
-}
-
-.animate-fade {
-  animation: fade-in 1.2s ease both;
 }
 
 .tech-html,
@@ -184,8 +159,7 @@ body {
   .animate-rise,
   .animate-rise-delay-1,
   .animate-rise-delay-2,
-  .animate-rise-delay-3,
-  .animate-fade {
+  .animate-rise-delay-3 {
     animation: none;
   }
 }

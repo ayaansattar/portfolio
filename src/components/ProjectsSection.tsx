@@ -2,18 +2,15 @@
 
 import { RevealLine } from "@/components/RevealLine";
 
-export type ProjectItem = {
+type ProjectItem = {
   number: string;
   title: string;
   tagline: string;
   description: string;
   stack: string;
-  /** Primary / live demo URL */
   href?: string;
   github?: string;
-  /** Image path under /public, e.g. /projects/foo.png */
   image?: string;
-  /** Video path under /public, e.g. /projects/foo.mp4 */
   video?: string;
 };
 
@@ -43,39 +40,12 @@ const projects: ProjectItem[] = [
   },
   {
     number: "03",
-    title: "Project Three",
-    tagline: "Short hook for what this does.",
+    title: "UAppen",
+    tagline: "Campus events app for UMass — filtered across 50+ locations.",
     description:
-      "Swap this blurp for the real story — problem, what you built, and the outcome.",
-    stack: "Python · FastAPI · Postgres",
-    href: "#projects",
-  },
-  {
-    number: "04",
-    title: "Project Four",
-    tagline: "Short hook for what this does.",
-    description:
-      "Swap this blurp for the real story — problem, what you built, and the outcome.",
-    stack: "TypeScript · Prisma · Docker",
-    href: "#projects",
-  },
-  {
-    number: "05",
-    title: "Project Five",
-    tagline: "Short hook for what this does.",
-    description:
-      "Swap this blurp for the real story — problem, what you built, and the outcome.",
-    stack: "Next.js · Tailwind · Vercel",
-    href: "#projects",
-  },
-  {
-    number: "06",
-    title: "Project Six",
-    tagline: "Short hook for what this does.",
-    description:
-      "Swap this blurp for the real story — problem, what you built, and the outcome.",
-    stack: "JavaScript · HTML · CSS",
-    href: "#projects",
+      "Team-built React Native app with @umass.edu-restricted Supabase auth and dynamic event filtering across campus. A FastAPI pipeline scrapes and syncs events every two hours (paginated API, SQLite dedup, under 10s sync latency). Regex location parsing mapped 50+ buildings and 30+ raw event types into 10 categories, cutting parsing errors by 90%.",
+    stack:
+      "React Native · TypeScript · Expo · FastAPI · Python · Supabase · SQLite",
   },
 ];
 

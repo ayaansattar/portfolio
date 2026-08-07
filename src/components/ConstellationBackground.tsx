@@ -10,33 +10,14 @@ type Spec = {
   r: number;
 };
 
-type ConstellationBackgroundProps = {
-  className?: string;
-  /** fixed = whole viewport, absolute = fill parent */
-  mode?: "fixed" | "absolute";
-  /** accent for light pages, mist for dark hero */
-  tone?: "accent" | "mist";
-};
-
 const LINK_DISTANCE = 120;
 const CURSOR_DISTANCE = 150;
 const MAX_SPECS = 90;
-
-const TONES = {
-  accent: "138, 138, 130", // text-secondary — quiet constellation dots
-  mist: "138, 138, 130",
-} as const;
-
-// Cursor links pick up the brand orange without tinting the whole field.
+const DOT_COLOR = "138, 138, 130";
 const CURSOR_LINK = "255, 107, 26";
 
-export function ConstellationBackground({
-  className = "",
-  mode = "fixed",
-  tone = "accent",
-}: ConstellationBackgroundProps) {
+export function ConstellationBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const color = TONES[tone];
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -73,14 +54,9 @@ export function ConstellationBackground({
     };
 
     const resize = () => {
-      const parent = canvas.parentElement;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width =
-        mode === "fixed" ? window.innerWidth : (parent?.clientWidth ?? window.innerWidth);
-      height =
-        mode === "fixed"
-          ? window.innerHeight
-          : (parent?.clientHeight ?? window.innerHeight);
+      width = window.innerWidth;
+      height = window.innerHeight;
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
@@ -90,12 +66,16 @@ export function ConstellationBackground({
     };
 
     const getHole = () => {
-      if (mode !== "fixed") return null;
       const el = document.querySelector("[data-constellation-hole]");
       if (!(el instanceof HTMLElement)) return null;
 
       const rect = el.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > height || rect.right < 0 || rect.left > width) {
+      if (
+        rect.bottom < 0 ||
+        rect.top > height ||
+        rect.right < 0 ||
+        rect.left > width
+      ) {
         return null;
       }
 
@@ -145,7 +125,6 @@ export function ConstellationBackground({
           a.y = Math.max(0, Math.min(height, a.y));
         }
 
-        // Keep specs outside the tech sphere area.
         if (hole && inHole(a.x, a.y, hole)) {
           const dx = a.x - hole.cx;
           const dy = a.y - hole.cy;
@@ -168,11 +147,11 @@ export function ConstellationBackground({
           const dist = Math.hypot(dx, dy);
 
           if (dist < LINK_DISTANCE) {
-            const alpha = (1 - dist / LINK_DISTANCE) * (tone === "mist" ? 0.22 : 0.28);
+            const alpha = (1 - dist / LINK_DISTANCE) * 0.28;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(${color}, ${alpha})`;
+            ctx.strokeStyle = `rgba(${DOT_COLOR}, ${alpha})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -184,8 +163,7 @@ export function ConstellationBackground({
           const dist = Math.hypot(dx, dy);
 
           if (dist < CURSOR_DISTANCE) {
-            const alpha =
-              (1 - dist / CURSOR_DISTANCE) * (tone === "mist" ? 0.4 : 0.5);
+            const alpha = (1 - dist / CURSOR_DISTANCE) * 0.5;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(mouseX, mouseY);
@@ -206,7 +184,7 @@ export function ConstellationBackground({
 
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${color}, ${tone === "mist" ? 0.45 : 0.55})`;
+        ctx.fillStyle = `rgba(${DOT_COLOR}, 0.55)`;
         ctx.fill();
       }
 
@@ -242,14 +220,12 @@ export function ConstellationBackground({
         onPointerLeave,
       );
     };
-  }, [color, mode, tone]);
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className={`pointer-events-none ${
-        mode === "fixed" ? "fixed inset-0 z-0" : "absolute inset-0"
-      } ${className}`}
+      className="pointer-events-none fixed inset-0 z-0"
       aria-hidden="true"
     />
   );

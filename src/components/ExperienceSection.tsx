@@ -8,8 +8,6 @@ type ExperienceItem = {
   org: string;
   period: string;
   location?: string;
-  mode?: string;
-  website?: string;
   demos?: Array<{ src: string; label: string; url: string }>;
   bullets: string[];
 };
@@ -20,7 +18,6 @@ const experiences: ExperienceItem[] = [
     org: "No Bad Days Club — Gamified travel and experiences",
     period: "Nov 2025 – Present",
     location: "Remote",
-    website: "https://www.nobaddaysclub.com/",
     demos: [
       {
         src: "/experience/NBDC_landing.mp4",
@@ -121,12 +118,6 @@ export function ExperienceSection() {
                       {item.location}
                     </span>
                   ) : null}
-                  {item.mode ? (
-                    <span className="inline-flex items-center gap-2">
-                      <BriefcaseIcon />
-                      {item.mode}
-                    </span>
-                  ) : null}
                 </div>
               </RevealLine>
 
@@ -182,22 +173,6 @@ function PinIcon() {
     >
       <path d="M12 21s6.5-5.2 6.5-10.2A6.5 6.5 0 0 0 5.5 10.8C5.5 15.8 12 21 12 21z" />
       <circle cx="12" cy="10.5" r="2.2" />
-    </svg>
-  );
-}
-
-function BriefcaseIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-    >
-      <rect x="3" y="7" width="18" height="13" rx="2" />
-      <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 13h18" />
     </svg>
   );
 }

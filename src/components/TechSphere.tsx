@@ -70,7 +70,7 @@ function TechLogo({ name, src }: { name: string; src: string }) {
         fallback.textContent = name.charAt(0);
         img.parentElement?.appendChild(fallback);
       }}
-      className="h-5 w-5 object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.18)]"
+      className="h-5 w-5 object-contain"
     />
   );
 }
