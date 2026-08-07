@@ -25,12 +25,6 @@ export function TechnologiesSection({ technologies }: TechnologiesSectionProps) 
           </h2>
           <div className="mt-3 h-px w-24 bg-accent" />
         </RevealLine>
-        <RevealLine>
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">
-            Drag the sphere to explore the tools I use and what I&apos;m learning
-            next.
-          </p>
-        </RevealLine>
         <RevealLine
           className="mt-12 overflow-visible"
           threshold={0.25}

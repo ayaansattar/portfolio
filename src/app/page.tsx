@@ -3,6 +3,7 @@ import { ExperienceSection } from "@/components/ExperienceSection";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { SiteNav } from "@/components/SiteNav";
+import { SocialLinks } from "@/components/SocialLinks";
 import { TechnologiesSection } from "@/components/TechnologiesSection";
 
 const technologies = [
@@ -38,32 +39,22 @@ export default function Home() {
 
           <main
             id="top"
-            className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-16 pt-24 sm:px-10 sm:pb-24"
+            className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-6 pb-16 pt-8 text-center sm:px-10"
           >
             <p className="animate-rise font-display text-7xl leading-none tracking-tight text-text-primary sm:text-8xl md:text-9xl">
               Ayaan
             </p>
             <div className="animate-rise-delay-1 mt-5 h-px w-20 bg-accent" />
-            <h1 className="animate-rise-delay-1 mt-4 max-w-xl font-display text-2xl leading-snug text-text-secondary italic sm:text-3xl">
-              Student learning to build with code.
-            </h1>
-            <p className="animate-rise-delay-2 mt-5 max-w-md text-base leading-relaxed text-text-secondary sm:text-lg">
-              Projects, experience, and the tools I&apos;m learning—shared as I
-              go.
-            </p>
-            <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center gap-4">
+            <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center justify-center gap-4">
               <a
-                href="#projects"
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-accent-on transition-colors hover:bg-accent-hover"
               >
-                See projects
+                Résumé
               </a>
-              <a
-                href="#experience"
-                className="inline-flex items-center justify-center border border-border px-6 py-3 text-sm font-medium text-text-primary transition-colors hover:border-accent hover:text-accent"
-              >
-                Experience
-              </a>
+              <SocialLinks variant="hero" />
             </div>
           </main>
         </header>
@@ -79,12 +70,23 @@ export default function Home() {
             <p className="text-sm text-text-dim">
               © {new Date().getFullYear()} Ayaan
             </p>
-            <a
-              href="mailto:hello@example.com"
-              className="text-sm font-medium text-text-secondary transition-colors hover:text-accent"
-            >
-              hello@example.com
-            </a>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <SocialLinks variant="footer" />
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-text-secondary transition-colors hover:text-accent"
+              >
+                Résumé
+              </a>
+              <a
+                href="mailto:aasattar@umass.edu"
+                className="text-sm font-medium text-text-secondary transition-colors hover:text-accent"
+              >
+                aasattar@umass.edu
+              </a>
+            </div>
           </div>
         </footer>
       </div>

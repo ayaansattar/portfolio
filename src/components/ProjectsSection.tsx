@@ -64,12 +64,6 @@ export function ProjectsSection() {
           </h2>
           <div className="mt-3 h-px w-24 bg-accent" />
         </RevealLine>
-        <RevealLine>
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-text-secondary">
-            Case studies as you scroll — title stays put while the work moves
-            beside it.
-          </p>
-        </RevealLine>
       </div>
 
       <div className="mx-auto w-full max-w-6xl px-6 pb-8 sm:px-10">
