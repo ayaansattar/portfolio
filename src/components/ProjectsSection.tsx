@@ -61,6 +61,7 @@ const projects: ProjectItem[] = [
     stack: "React · Vite · Express · Prisma · PostgreSQL · Neon · Render",
     href: "https://cinelog-q45t.onrender.com/",
     github: "https://github.com/ayaansattar/CineLog",
+    video: "/projects/CineLog.mp4",
   },
 ];
 
