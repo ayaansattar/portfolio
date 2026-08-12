@@ -2,6 +2,7 @@ import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { ExperienceSection } from "@/components/ExperienceSection";
 import { HeroRockets } from "@/components/HeroRockets";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { MediaPreloader } from "@/components/MediaPreloader";
 import { ProjectsSection } from "@/components/ProjectsSection";
 import { SiteNav } from "@/components/SiteNav";
 import { SocialLinks } from "@/components/SocialLinks";
@@ -44,6 +45,7 @@ export default function Home() {
     <div className="relative flex min-h-full flex-col">
       <ConstellationBackground />
       <LoadingScreen />
+      <MediaPreloader logos={technologies.map((tech) => tech.logo)} />
       <div className="relative z-10 flex min-h-full flex-col">
         <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
           <HeroRockets />

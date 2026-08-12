@@ -1,5 +1,6 @@
 "use client";
 
+import { LazyVideo } from "@/components/LazyVideo";
 import { RevealLine } from "@/components/RevealLine";
 
 type ProjectItem = {
@@ -168,18 +169,13 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
   }
 
   const media = project.video ? (
-    <video
+    <LazyVideo
       src={project.video}
       className={
         isMobile
           ? "absolute inset-0 h-full w-full object-cover"
           : "absolute inset-0 h-full w-full scale-[1.02] object-cover object-center"
       }
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="metadata"
     />
   ) : project.image ? (
     // eslint-disable-next-line @next/next/no-img-element

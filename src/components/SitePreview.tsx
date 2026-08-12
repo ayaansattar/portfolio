@@ -1,3 +1,5 @@
+import { LazyVideo } from "@/components/LazyVideo";
+
 type SitePreviewProps = {
   url: string;
   video: string;
@@ -33,14 +35,9 @@ export function SitePreview({ url, video, label }: SitePreviewProps) {
         className="group relative block aspect-video w-full overflow-hidden bg-surface"
         aria-label={`Open ${label} demo`}
       >
-        <video
+        <LazyVideo
           src={video}
           className="absolute inset-0 h-full w-full scale-[1.08] object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
         />
       </a>
     </div>
