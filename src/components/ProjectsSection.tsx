@@ -112,7 +112,7 @@ export function ProjectsSection() {
                         rel="noopener noreferrer"
                         className="text-accent transition-colors hover:text-accent-hover"
                       >
-                        Demo ↗
+                        Web App ↗
                       </a>
                     ) : null}
                     {project.github ? (
