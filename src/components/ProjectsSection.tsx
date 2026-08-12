@@ -57,8 +57,9 @@ const projects: ProjectItem[] = [
     title: "CineLog",
     tagline: "Full-stack movie and TV tracker with mood-aware recommendations.",
     description:
-      "A movie/TV tracker with TMDB search, watchlist states, half-star ratings, and season progress — deployed on Render with Neon Postgres. Imports Letterboxd CSVs and PDF lists with TMDB matching and deduping. Gemini ranks similar/recommended candidates against freeform mood queries, tagging taste-matches vs popular picks instead of inventing titles.",
+      "A movie/TV tracker with TMDB search, watch states, ratings, and season progress — on Render with Neon Postgres. Imports Letterboxd CSVs and PDF lists with auto-enrichment. Gemini ranks real TMDB candidates against mood queries as taste-matches or popular picks.",
     stack: "React · Vite · Express · Prisma · PostgreSQL · Neon · Render",
+    href: "https://cinelog-q45t.onrender.com/",
     github: "https://github.com/ayaansattar/CineLog",
   },
 ];
