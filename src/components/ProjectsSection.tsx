@@ -52,6 +52,15 @@ const projects: ProjectItem[] = [
     video: "/projects/UAppen.mp4",
     frame: "mobile",
   },
+  {
+    number: "04",
+    title: "CineLog",
+    tagline: "Full-stack movie and TV tracker with mood-aware recommendations.",
+    description:
+      "A movie/TV tracker with TMDB search, watchlist states, half-star ratings, and season progress — deployed on Render with Neon Postgres. Imports Letterboxd CSVs and PDF lists with TMDB matching and deduping. Gemini ranks similar/recommended candidates against freeform mood queries, tagging taste-matches vs popular picks instead of inventing titles.",
+    stack: "React · Vite · Express · Prisma · PostgreSQL · Neon · Render",
+    github: "https://github.com/ayaansattar/CineLog",
+  },
 ];
 
 export function ProjectsSection() {
