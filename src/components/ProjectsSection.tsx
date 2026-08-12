@@ -173,7 +173,7 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
       className={
         isMobile
           ? "absolute inset-0 h-full w-full object-cover"
-          : "absolute inset-0 h-full w-full scale-[1.1] object-cover object-[center_18%]"
+          : "absolute inset-0 h-full w-full scale-[1.02] object-cover object-center"
       }
       autoPlay
       muted
