@@ -36,9 +36,9 @@ const experiences: ExperienceItem[] = [
       },
     ],
     bullets: [
-      "Architected and shipped a full-stack consumer mobile web app (React, TypeScript, Tailwind, Python/FastAPI, PostgreSQL, Docker, HAProxy on AWS Lightsail) from zero to 140+ active beta users.",
+      "Collabrated with another engineer and shipped a full-stack consumer mobile web app (React, TypeScript, Tailwind, Python/FastAPI, PostgreSQL, Docker, HAProxy on AWS Lightsail) from zero to 140+ active beta users.",
       "Integrated Google Gemini 1.5 Flash for AI-powered photo verification of real-world task completions, eliminating the need for manual moderation as the user base scaled.",
-      "Collaborated with cross-functional teams to build a multi-page marketing site (Next.js 14, React 18, TypeScript, Tailwind) with responsive, mobile-first layouts and optimized performance, increasing user engagement by 73%.",
+      "Built a multi-page marketing site (Next.js 14, React 18, TypeScript, Tailwind) with responsive, mobile-first layouts and optimized performance, increasing user engagement by 73%.",
     ],
   },
   {
