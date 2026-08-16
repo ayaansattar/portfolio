@@ -9,7 +9,7 @@ import { SocialLinks } from "@/components/SocialLinks";
 import { TechnologiesSection } from "@/components/TechnologiesSection";
 
 const RESUME_URL =
-  "https://docs.google.com/document/d/1X-F_MIfP4g05kk11JKZ4kHbxAnI49b-nakKe4LFFV5U/export?format=pdf";
+  "https://docs.google.com/document/d/1X-F_MIfP4g05kk11JKZ4kHbxAnI49b-nakKe4LFFV5U/preview";
 
 const technologies = [
   { name: "Python", logo: "/tech/python.svg" },
