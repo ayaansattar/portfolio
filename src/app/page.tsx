@@ -8,6 +8,9 @@ import { SiteNav } from "@/components/SiteNav";
 import { SocialLinks } from "@/components/SocialLinks";
 import { TechnologiesSection } from "@/components/TechnologiesSection";
 
+const RESUME_URL =
+  "https://docs.google.com/document/d/1X-F_MIfP4g05kk11JKZ4kHbxAnI49b-nakKe4LFFV5U/export?format=pdf";
+
 const technologies = [
   { name: "Python", logo: "/tech/python.svg" },
   { name: "TypeScript", logo: "/tech/typescript.svg" },
@@ -62,7 +65,7 @@ export default function Home() {
               <div className="animate-rise-delay-1 mt-5 h-px w-20 bg-accent" />
               <div className="animate-rise-delay-3 mt-10 flex flex-wrap items-center justify-center gap-4">
                 <a
-                  href="/resume.pdf"
+                  href={RESUME_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-accent px-6 py-3 text-sm font-medium text-accent-on transition-colors hover:bg-accent-hover"
@@ -89,7 +92,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
               <SocialLinks variant="footer" />
               <a
-                href="/resume.pdf"
+                href={RESUME_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-text-secondary transition-colors hover:text-accent"
