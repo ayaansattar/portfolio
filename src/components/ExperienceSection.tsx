@@ -16,7 +16,7 @@ const experiences: ExperienceItem[] = [
   {
     role: "Front-End Engineer",
     org: "No Bad Days Club — Gamified travel and experiences",
-    period: "Nov 2025 – Present",
+    period: "Nov 2025 – June 2026",
     location: "Remote",
     demos: [
       {
