@@ -1,118 +1,108 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 type RocketConfig = {
   id: number;
-  mode: "across" | "liftoff";
+  fromX: string;
+  fromY: string;
+  angle: number;
+  fromScale: number;
   delay: string;
   duration: string;
   size: number;
-  top?: string;
-  left?: string;
 };
 
+/** Rockets spawn around the viewport edge and fly into the tunnel center. */
 const heroRockets: RocketConfig[] = [
   {
     id: 1,
-    mode: "across",
-    top: "22%",
+    fromX: "-44vw",
+    fromY: "-34vh",
+    angle: 36,
+    fromScale: 1.15,
     delay: "0s",
     duration: "11s",
-    size: 56,
+    size: 52,
   },
   {
     id: 2,
-    mode: "liftoff",
-    left: "18%",
-    delay: "2.5s",
-    duration: "9s",
-    size: 48,
+    fromX: "42vw",
+    fromY: "-30vh",
+    angle: 144,
+    fromScale: 1.05,
+    delay: "2.2s",
+    duration: "10s",
+    size: 46,
   },
   {
     id: 3,
-    mode: "across",
-    top: "58%",
-    delay: "5s",
-    duration: "13s",
+    fromX: "-40vw",
+    fromY: "36vh",
+    angle: -34,
+    fromScale: 1.1,
+    delay: "4.5s",
+    duration: "12s",
     size: 44,
   },
   {
     id: 4,
-    mode: "liftoff",
-    left: "72%",
-    delay: "7s",
-    duration: "10s",
-    size: 52,
+    fromX: "38vw",
+    fromY: "32vh",
+    angle: 214,
+    fromScale: 1,
+    delay: "6.8s",
+    duration: "11s",
+    size: 48,
   },
   {
     id: 5,
-    mode: "across",
-    top: "38%",
-    delay: "9.5s",
-    duration: "12s",
-    size: 40,
-  },
-];
-
-const sparseRockets: RocketConfig[] = [
-  {
-    id: 1,
-    mode: "across",
-    top: "20%",
-    delay: "1s",
-    duration: "15s",
+    fromX: "-48vw",
+    fromY: "4vh",
+    angle: 4,
+    fromScale: 0.95,
+    delay: "8.5s",
+    duration: "13s",
     size: 40,
   },
   {
-    id: 2,
-    mode: "liftoff",
-    left: "82%",
-    delay: "6s",
-    duration: "12s",
-    size: 36,
-  },
-  {
-    id: 3,
-    mode: "across",
-    top: "72%",
-    delay: "10s",
-    duration: "16s",
-    size: 34,
+    id: 6,
+    fromX: "6vw",
+    fromY: "-42vh",
+    angle: 96,
+    fromScale: 1.08,
+    delay: "1.4s",
+    duration: "10.5s",
+    size: 42,
   },
 ];
 
-type HeroRocketsProps = {
-  /** hero = denser liftoffs; sparse = quieter (Technologies) */
-  density?: "hero" | "sparse";
-};
-
-export function HeroRockets({ density = "hero" }: HeroRocketsProps) {
-  const rockets = density === "sparse" ? sparseRockets : heroRockets;
-  const prefix = density === "sparse" ? "tech" : "hero";
-
+export function HeroRockets() {
   return (
     <div
       className="hero-rockets pointer-events-none absolute inset-0 z-[1] overflow-hidden"
       aria-hidden="true"
     >
-      {rockets.map((rocket) => (
+      {heroRockets.map((rocket) => (
         <span
-          key={`${prefix}-${rocket.id}`}
-          className={
-            rocket.mode === "liftoff"
-              ? "hero-rocket hero-rocket-liftoff absolute"
-              : "hero-rocket hero-rocket-across absolute"
+          key={rocket.id}
+          className="hero-rocket hero-rocket-suck absolute"
+          style={
+            {
+              left: "50%",
+              top: "50%",
+              width: rocket.size,
+              height: rocket.size * 0.45,
+              animationDelay: rocket.delay,
+              animationDuration: rocket.duration,
+              "--from-x": rocket.fromX,
+              "--from-y": rocket.fromY,
+              "--angle": `${rocket.angle}deg`,
+              "--from-scale": rocket.fromScale,
+            } as CSSProperties
           }
-          style={{
-            top: rocket.top,
-            left: rocket.left,
-            width: rocket.size,
-            height: rocket.size * 0.45,
-            animationDelay: rocket.delay,
-            animationDuration: rocket.duration,
-            opacity: density === "sparse" ? 0.72 : 1,
-          }}
         >
-          <RocketWithJet id={`${prefix}-${rocket.id}`} />
+          <RocketWithJet id={`hero-${rocket.id}`} />
         </span>
       ))}
     </div>

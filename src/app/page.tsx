@@ -1,5 +1,6 @@
 import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { ExperienceSection } from "@/components/ExperienceSection";
+import { HeroLightTunnel } from "@/components/HeroLightTunnel";
 import { HeroRockets } from "@/components/HeroRockets";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { MediaPreloader } from "@/components/MediaPreloader";
@@ -51,6 +52,7 @@ export default function Home() {
       <MediaPreloader logos={technologies.map((tech) => tech.logo)} />
       <div className="relative z-10 flex min-h-full flex-col">
         <header className="relative isolate flex min-h-svh flex-col overflow-hidden">
+          <HeroLightTunnel />
           <HeroRockets />
           <div className="relative z-10 flex min-h-svh flex-col">
             <SiteNav />
