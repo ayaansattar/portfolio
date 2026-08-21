@@ -1,79 +1,55 @@
 "use client";
 
-import type { CSSProperties } from "react";
-
 type RocketConfig = {
   id: number;
-  fromX: string;
-  fromY: string;
-  angle: number;
-  fromScale: number;
+  mode: "across" | "liftoff";
   delay: string;
   duration: string;
   size: number;
+  top?: string;
+  left?: string;
 };
 
-/** Rockets spawn around the viewport edge and fly into the tunnel center. */
 const heroRockets: RocketConfig[] = [
   {
     id: 1,
-    fromX: "-44vw",
-    fromY: "-34vh",
-    angle: 36,
-    fromScale: 1.15,
+    mode: "across",
+    top: "22%",
     delay: "0s",
     duration: "11s",
-    size: 52,
+    size: 56,
   },
   {
     id: 2,
-    fromX: "42vw",
-    fromY: "-30vh",
-    angle: 144,
-    fromScale: 1.05,
-    delay: "2.2s",
-    duration: "10s",
-    size: 46,
+    mode: "liftoff",
+    left: "18%",
+    delay: "2.5s",
+    duration: "9s",
+    size: 48,
   },
   {
     id: 3,
-    fromX: "-40vw",
-    fromY: "36vh",
-    angle: -34,
-    fromScale: 1.1,
-    delay: "4.5s",
-    duration: "12s",
+    mode: "across",
+    top: "58%",
+    delay: "5s",
+    duration: "13s",
     size: 44,
   },
   {
     id: 4,
-    fromX: "38vw",
-    fromY: "32vh",
-    angle: 214,
-    fromScale: 1,
-    delay: "6.8s",
-    duration: "11s",
-    size: 48,
+    mode: "liftoff",
+    left: "72%",
+    delay: "7s",
+    duration: "10s",
+    size: 52,
   },
   {
     id: 5,
-    fromX: "-48vw",
-    fromY: "4vh",
-    angle: 4,
-    fromScale: 0.95,
-    delay: "8.5s",
-    duration: "13s",
+    mode: "across",
+    top: "38%",
+    delay: "9.5s",
+    duration: "12s",
     size: 40,
-  },
-  {
-    id: 6,
-    fromX: "6vw",
-    fromY: "-42vh",
-    angle: 96,
-    fromScale: 1.08,
-    delay: "1.4s",
-    duration: "10.5s",
-    size: 42,
   },
 ];
 
@@ -86,21 +62,19 @@ export function HeroRockets() {
       {heroRockets.map((rocket) => (
         <span
           key={rocket.id}
-          className="hero-rocket hero-rocket-suck absolute"
-          style={
-            {
-              left: "50%",
-              top: "50%",
-              width: rocket.size,
-              height: rocket.size * 0.45,
-              animationDelay: rocket.delay,
-              animationDuration: rocket.duration,
-              "--from-x": rocket.fromX,
-              "--from-y": rocket.fromY,
-              "--angle": `${rocket.angle}deg`,
-              "--from-scale": rocket.fromScale,
-            } as CSSProperties
+          className={
+            rocket.mode === "liftoff"
+              ? "hero-rocket hero-rocket-liftoff absolute"
+              : "hero-rocket hero-rocket-across absolute"
           }
+          style={{
+            top: rocket.top,
+            left: rocket.left,
+            width: rocket.size,
+            height: rocket.size * 0.45,
+            animationDelay: rocket.delay,
+            animationDuration: rocket.duration,
+          }}
         >
           <RocketWithJet id={`hero-${rocket.id}`} />
         </span>
