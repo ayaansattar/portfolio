@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Great_Vibes, Newsreader, Outfit } from "next/font/google";
+import { Lobster, Newsreader, Outfit } from "next/font/google";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -13,8 +13,8 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
-const greatVibes = Great_Vibes({
-  variable: "--font-great-vibes",
+const lobster = Lobster({
+  variable: "--font-lobster",
   subsets: ["latin"],
   weight: "400",
 });
@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${newsreader.variable} ${greatVibes.variable} h-full antialiased`}
+      className={`${outfit.variable} ${newsreader.variable} ${lobster.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

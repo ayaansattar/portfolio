@@ -61,7 +61,7 @@
   --color-accent-hover: var(--accent-hover);
   --font-sans: var(--font-body);
   --font-display: var(--font-newsreader);
-  --font-script: var(--font-great-vibes);
+  --font-script: var(--font-lobster);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -273,9 +273,9 @@ body {
 .loading-screen-name {
   margin: 0;
   display: flex;
-  font-size: clamp(5rem, 18vw, 11rem);
+  font-size: clamp(5.5rem, 20vw, 12rem);
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   font-weight: 400;
 }
 
