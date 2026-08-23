@@ -17,19 +17,24 @@ const EXPERIENCE_VIDEOS = [
 
 type MediaPreloaderProps = {
   logos: string[];
+  /** Wait this long before warming other media (lets the intro play smoothly). */
+  deferMs?: number;
 };
 
 /**
- * Warms the browser cache during the boot animation so media is ready
- * when sections enter view — without competing with first paint.
+ * Warms the browser cache after the intro so media is ready when sections
+ * enter view — without competing with intro video decode/bandwidth.
  */
-export function MediaPreloader({ logos }: MediaPreloaderProps) {
+export function MediaPreloader({ logos, deferMs = 0 }: MediaPreloaderProps) {
   useEffect(() => {
     const idle =
       typeof window.requestIdleCallback === "function"
         ? window.requestIdleCallback.bind(window)
         : (cb: IdleRequestCallback) =>
-            window.setTimeout(() => cb({ didTimeout: false, timeRemaining: () => 0 }), 200);
+            window.setTimeout(
+              () => cb({ didTimeout: false, timeRemaining: () => 0 }),
+              200,
+            );
 
     const cancelIdle =
       typeof window.cancelIdleCallback === "function"
@@ -38,6 +43,8 @@ export function MediaPreloader({ logos }: MediaPreloaderProps) {
 
     const controllers: AbortController[] = [];
     const imageCache: HTMLImageElement[] = [];
+    let idleId = 0;
+    let laterId = 0;
 
     const preloadLogos = () => {
       for (const src of logos) {
@@ -62,25 +69,28 @@ export function MediaPreloader({ logos }: MediaPreloaderProps) {
       });
     };
 
-    const idleId = idle(() => {
-      preloadLogos();
-      // First project video is highest priority (above the fold after scroll).
-      warmVideo(PROJECT_VIDEOS[0]!);
-    });
+    const startWarming = () => {
+      idleId = idle(() => {
+        preloadLogos();
+        warmVideo(PROJECT_VIDEOS[0]!);
+      }) as number;
 
-    const laterId = window.setTimeout(() => {
-      for (const src of PROJECT_VIDEOS.slice(1)) warmVideo(src);
-      for (const src of EXPERIENCE_VIDEOS) warmVideo(src);
-      // Warm the TechSphere chunk so Three.js isn't a cold download on scroll.
-      void import("@/components/TechSphere");
-    }, 1800);
+      laterId = window.setTimeout(() => {
+        for (const src of PROJECT_VIDEOS.slice(1)) warmVideo(src);
+        for (const src of EXPERIENCE_VIDEOS) warmVideo(src);
+        void import("@/components/TechSphere");
+      }, 1800);
+    };
+
+    const deferId = window.setTimeout(startWarming, deferMs);
 
     return () => {
-      cancelIdle(idleId as number);
+      window.clearTimeout(deferId);
+      cancelIdle(idleId);
       window.clearTimeout(laterId);
       for (const controller of controllers) controller.abort();
     };
-  }, [logos]);
+  }, [logos, deferMs]);
 
   return null;
 }

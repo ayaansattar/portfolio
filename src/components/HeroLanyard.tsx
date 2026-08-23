@@ -16,6 +16,7 @@ const CARD_INFO = {
 
 export function HeroLanyard() {
   const [isMobile, setIsMobile] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -24,6 +25,21 @@ export function HeroLanyard() {
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
   }, []);
+
+  useEffect(() => {
+    const onDone = () => setReady(true);
+    window.addEventListener("portfolio-intro-done", onDone);
+
+    // Fallback if the event already fired / intro was skipped.
+    const fallback = window.setTimeout(() => setReady(true), 8000);
+
+    return () => {
+      window.removeEventListener("portfolio-intro-done", onDone);
+      window.clearTimeout(fallback);
+    };
+  }, []);
+
+  if (!ready) return null;
 
   // Desktop keeps the original full-hero right hang.
   // Mobile: smaller card, clipped to the top half.

@@ -3,182 +3,158 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const NAME = "Ayaan";
-const LETTERS = NAME.split("");
-const STAGGER_MS = 95;
-const LETTER_DURATION_MS = 700;
-const HOLD_MS = 700;
-const LETTER_SCREEN_FADE_MS = 450;
+const HOLD_MS = 1000;
+const EXIT_MS = 500;
+const VIDEO_FADE_MS = 400;
 
 const INTRO_MP4 = "/intro/crt-enter.mp4";
-/** Cut to the name intro this many seconds before video end. */
-const VIDEO_HANDOFF_LEAD_S = 0.35;
+/** Start the seamless name handoff this many seconds before video end. */
+const HANDOFF_LEAD_S = 0.08;
 
-type Phase = "boot" | "video" | "enter" | "hold" | "exit" | "gone";
-
-function unlockScroll() {
-  document.body.style.overflow = "";
-}
+type Stage = "video" | "name" | "exit" | "done";
 
 export function LoadingScreen() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const videoHandoffStarted = useRef(false);
-  const [phase, setPhase] = useState<Phase>("boot");
-  const [mode, setMode] = useState<"video" | "letters">("video");
+  const handedOff = useRef(false);
+  const [stage, setStage] = useState<Stage>("video");
+  const [showVideo, setShowVideo] = useState(true);
+  const [videoOut, setVideoOut] = useState(false);
 
-  /** Opaque cut: video → name intro. Never fade the overlay away here or the site flashes. */
-  const startLetters = useCallback(() => {
-    if (videoHandoffStarted.current) return;
-    videoHandoffStarted.current = true;
-    setMode("letters");
-    setPhase("boot");
+  const finishIntro = useCallback(() => {
+    document.body.style.overflow = "";
+    window.dispatchEvent(new Event("portfolio-intro-done"));
+    setStage("done");
   }, []);
 
+  const goToName = useCallback(() => {
+    if (handedOff.current) return;
+    handedOff.current = true;
+
+    const video = videoRef.current;
+    if (video) {
+      try {
+        video.pause();
+      } catch {
+        // ignore
+      }
+    }
+
+    // Overlay stays opaque black. Name appears instantly; video fades under it.
+    setVideoOut(true);
+    setStage("name");
+  }, []);
+
+  // Lock scroll for the whole intro. Do not unlock on effect cleanup —
+  // React Strict Mode remount was unlocking early and flashing the homepage.
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion) {
-      videoHandoffStarted.current = true;
-      setMode("letters");
-    } else {
-      setPhase("video");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      handedOff.current = true;
+      setShowVideo(false);
+      setStage("name");
     }
-
-    return () => unlockScroll();
   }, []);
 
-  // Name intro → homepage (only place we fade the overlay to reveal the site).
+  // After video fade completes, drop the video element.
   useEffect(() => {
-    if (mode !== "letters") return;
+    if (!videoOut) return;
+    const timer = window.setTimeout(() => setShowVideo(false), VIDEO_FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [videoOut]);
 
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+  // Name hold → fade overlay → site.
+  useEffect(() => {
+    if (stage !== "name") return;
 
-    if (reduceMotion) {
-      setPhase("enter");
-      const timer = window.setTimeout(() => {
-        setPhase("gone");
-        unlockScroll();
-      }, 350);
-      return () => window.clearTimeout(timer);
-    }
-
-    setPhase("boot");
-    const enterStart = 50;
-    const enterDone =
-      enterStart + (LETTERS.length - 1) * STAGGER_MS + LETTER_DURATION_MS;
-    const exitStart = enterDone + HOLD_MS;
-    const exitDone =
-      exitStart + (LETTERS.length - 1) * STAGGER_MS + LETTER_DURATION_MS;
-
-    const enterTimer = window.setTimeout(() => setPhase("enter"), enterStart);
-    const holdTimer = window.setTimeout(() => setPhase("hold"), enterDone);
-    const exitTimer = window.setTimeout(() => setPhase("exit"), exitStart);
-    const goneTimer = window.setTimeout(() => {
-      setPhase("gone");
-      unlockScroll();
-    }, exitDone + LETTER_SCREEN_FADE_MS);
+    const exitTimer = window.setTimeout(() => setStage("exit"), HOLD_MS);
+    const doneTimer = window.setTimeout(finishIntro, HOLD_MS + EXIT_MS);
 
     return () => {
-      window.clearTimeout(enterTimer);
-      window.clearTimeout(holdTimer);
       window.clearTimeout(exitTimer);
-      window.clearTimeout(goneTimer);
+      window.clearTimeout(doneTimer);
     };
-  }, [mode]);
+  }, [stage, finishIntro]);
 
+  // Start playback; hand off near the end via rAF (reliable under load).
   useEffect(() => {
-    if (mode !== "video" || phase !== "video") return;
+    if (stage !== "video") return;
     const video = videoRef.current;
     if (!video) return;
 
+    let raf = 0;
+
+    const watch = () => {
+      if (handedOff.current) return;
+      if (
+        Number.isFinite(video.duration) &&
+        video.duration > 0 &&
+        video.currentTime >= video.duration - HANDOFF_LEAD_S
+      ) {
+        goToName();
+        return;
+      }
+      raf = window.requestAnimationFrame(watch);
+    };
+
     const tryPlay = () => {
-      video.play().catch(() => startLetters());
+      video
+        .play()
+        .then(() => {
+          raf = window.requestAnimationFrame(watch);
+        })
+        .catch(() => {
+          goToName();
+        });
     };
 
     if (video.readyState >= 2) {
       tryPlay();
     } else {
       video.addEventListener("canplay", tryPlay, { once: true });
-      return () => video.removeEventListener("canplay", tryPlay);
     }
-  }, [mode, phase, startLetters]);
 
-  if (phase === "gone") return null;
+    return () => {
+      window.cancelAnimationFrame(raf);
+      video.removeEventListener("canplay", tryPlay);
+    };
+  }, [stage, goToName]);
 
-  if (mode === "video") {
-    return (
-      <div className="loading-screen loading-screen--crt" aria-hidden="true">
-        {phase === "video" ? (
-          <video
-            ref={videoRef}
-            className="loading-screen-crt-video"
-            src={INTRO_MP4}
-            muted
-            playsInline
-            autoPlay
-            preload="auto"
-            onTimeUpdate={() => {
-              const video = videoRef.current;
-              if (
-                !video ||
-                videoHandoffStarted.current ||
-                !Number.isFinite(video.duration)
-              ) {
-                return;
-              }
-              if (video.currentTime >= video.duration - VIDEO_HANDOFF_LEAD_S) {
-                startLetters();
-              }
-            }}
-            onEnded={startLetters}
-            onError={startLetters}
-          />
-        ) : null}
-      </div>
-    );
-  }
+  if (stage === "done") return null;
 
   return (
     <div
-      className={`loading-screen ${phase === "exit" ? "loading-screen-exit" : ""}`}
-      style={
-        phase === "exit"
-          ? {
-              transitionDelay: `${
-                (LETTERS.length - 1) * STAGGER_MS + LETTER_DURATION_MS * 0.35
-              }ms`,
-            }
-          : undefined
-      }
-      aria-hidden={phase === "exit"}
+      className={`loading-screen loading-screen--crt${
+        stage === "exit" ? " loading-screen-exit" : ""
+      }`}
+      aria-hidden={stage === "exit"}
     >
-      <p className="loading-screen-name font-script" aria-label={NAME}>
-        {LETTERS.map((letter, index) => {
-          const delay = `${index * STAGGER_MS}ms`;
+      {showVideo ? (
+        <video
+          ref={videoRef}
+          className={`loading-screen-crt-video${
+            videoOut ? " loading-screen-crt-video--out" : ""
+          }`}
+          src={INTRO_MP4}
+          muted
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          onEnded={goToName}
+          onError={goToName}
+        />
+      ) : null}
 
-          let letterClass = "loading-screen-letter";
-          if (phase === "enter" || phase === "hold") {
-            letterClass += " loading-screen-letter-in";
-          } else if (phase === "exit") {
-            letterClass += " loading-screen-letter-out";
-          }
-
-          return (
-            <span
-              key={`${letter}-${index}`}
-              className={letterClass}
-              style={{ transitionDelay: delay }}
-              aria-hidden="true"
-            >
-              {letter}
-            </span>
-          );
-        })}
-      </p>
+      {(stage === "name" || stage === "exit") && (
+        <p
+          className={`loading-screen-name font-script loading-screen-name--seamless${
+            stage === "exit" ? " loading-screen-name-out" : ""
+          }`}
+          aria-label={NAME}
+        >
+          {NAME}
+        </p>
+      )}
     </div>
   );
 }

@@ -263,20 +263,59 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  /* Promote to its own layer; avoid layout thrash during decode. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  content-visibility: auto;
+}
+
+.loading-screen-crt-video--out {
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loading-screen-name {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: clamp(6rem, 24vw, 14rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+  color: #ff7828;
+  opacity: 0;
+  transform: translateY(1.1rem) scale(0.97);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Video handoff: name is already on screen in the clip — show instantly, no pop-in. */
+.loading-screen-name--seamless {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.loading-screen-exit .loading-screen-name--seamless {
+  transition: none;
+}
+
+.loading-screen-name-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.loading-screen-name-out {
+  opacity: 0;
+  transform: translateY(-1rem) scale(0.97);
 }
 
 .loading-screen-exit {
   opacity: 0;
   pointer-events: none;
-}
-
-.loading-screen-name {
-  margin: 0;
-  display: flex;
-  font-size: clamp(5.5rem, 20vw, 12rem);
-  line-height: 1;
-  letter-spacing: 0;
-  font-weight: 400;
 }
 
 .loading-screen-letter {
@@ -300,10 +339,12 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .loading-screen,
+  .loading-screen-name,
   .loading-screen-letter {
     transition: none;
   }
 
+  .loading-screen-name,
   .loading-screen-letter {
     opacity: 1;
     transform: none;
