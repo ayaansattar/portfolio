@@ -48,20 +48,20 @@ export function HeroLanyard() {
     <div
       className={
         isMobile
-          ? "pointer-events-none absolute inset-x-0 top-0 z-[5] h-[52%]"
+          ? "pointer-events-none absolute inset-x-0 top-0 z-[5] h-[62%]"
           : "pointer-events-none absolute inset-0 z-30"
       }
       aria-hidden="true"
     >
       <Lanyard
-        position={isMobile ? [0, -0.35, 14] : [0, -1.6, 13]}
+        position={isMobile ? [0, 0.35, 12] : [0, -1.6, 13]}
         gravity={[0, -40, 0]}
-        fov={isMobile ? 22 : 20}
+        fov={isMobile ? 20 : 20}
         transparent
         frontImage="/id/portrait.jpg"
         imageFit="cover"
-        lanyardWidth={isMobile ? 1.15 : 1.25}
-        hangOffset={isMobile ? [0, 3.35, 0] : [2.15, 4, 0]}
+        lanyardWidth={isMobile ? 1.2 : 1.25}
+        hangOffset={isMobile ? [0, 2.55, 0] : [2.15, 4, 0]}
         cardInfo={CARD_INFO}
         interactive={!isMobile}
       />

@@ -296,7 +296,8 @@
   }
 
   .projects-folder-wrap--open {
-    min-height: 18rem;
+    min-height: 21rem;
+    gap: 2rem;
   }
 
   .projects-folder {
@@ -319,7 +320,8 @@
     gap: 0.7rem;
     width: 100%;
     max-width: 100%;
-    padding: 0.75rem 1rem 1.25rem;
+    margin-bottom: 2.75rem;
+    padding: 0.5rem 1rem 0.25rem;
     overflow-x: auto;
     overflow-y: visible;
     scroll-snap-type: x mandatory;
@@ -344,23 +346,23 @@
   }
 
   .projects-mobile-curve__card--1 {
-    transform: translateY(1.1rem) rotate(-8deg);
+    transform: translateY(-1.1rem) rotate(-8deg);
   }
 
   .projects-mobile-curve__card--2 {
-    transform: translateY(0.15rem) rotate(-2.5deg);
+    transform: translateY(-2.1rem) rotate(-2.5deg);
   }
 
   .projects-mobile-curve__card--3 {
-    transform: translateY(0.15rem) rotate(2.5deg);
+    transform: translateY(-2.1rem) rotate(2.5deg);
   }
 
   .projects-mobile-curve__card--4 {
-    transform: translateY(1.1rem) rotate(8deg);
+    transform: translateY(-1.1rem) rotate(8deg);
   }
 
   .projects-mobile-curve__card:active {
-    transform: translateY(0) rotate(0deg) scale(0.97);
+    transform: translateY(-1.6rem) rotate(0deg) scale(0.97);
   }
 
   .projects-mobile-curve__card .project-paper,

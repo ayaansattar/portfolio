@@ -599,21 +599,23 @@ function Band({
   );
   const [dragged, drag] = useState<false | THREE.Vector3>(false);
   const [hovered, hover] = useState(false);
+  const strapLen = isMobile ? 0.55 : 1;
+  const jointStep = isMobile ? 0.28 : 0.5;
 
   useRopeJoint(
     fixed as RefObject<RapierRigidBody>,
     j1 as RefObject<RapierRigidBody>,
-    [[0, 0, 0], [0, 0, 0], 1],
+    [[0, 0, 0], [0, 0, 0], strapLen],
   );
   useRopeJoint(
     j1 as RefObject<RapierRigidBody>,
     j2 as RefObject<RapierRigidBody>,
-    [[0, 0, 0], [0, 0, 0], 1],
+    [[0, 0, 0], [0, 0, 0], strapLen],
   );
   useRopeJoint(
     j2 as RefObject<RapierRigidBody>,
     j3 as RefObject<RapierRigidBody>,
-    [[0, 0, 0], [0, 0, 0], 1],
+    [[0, 0, 0], [0, 0, 0], strapLen],
   );
   useSphericalJoint(
     j3 as RefObject<RapierRigidBody>,
@@ -736,17 +738,17 @@ function Band({
     <>
       <group position={hangOffset}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody position={[jointStep, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[jointStep * 2, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[jointStep * 3, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
-          position={[2, 0, 0]}
+          position={[jointStep * 4, 0, 0]}
           ref={card}
           {...segmentProps}
           type={dragged ? "kinematicPosition" : "dynamic"}
