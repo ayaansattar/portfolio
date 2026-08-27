@@ -140,7 +140,7 @@ export default function DepthCarousel({
 
   const dragRef = useRef<DragState | null>(null);
   const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const autoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoTimerRef = useRef<number | null>(null);
   const reducedRef = useRef(false);
 
   const [active, setActive] = useState(0);
