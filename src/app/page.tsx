@@ -49,10 +49,7 @@ export default function Home() {
     <div className="relative flex min-h-full flex-col">
       <ConstellationBackground />
       <LoadingScreen />
-      <MediaPreloader
-          logos={technologies.map((tech) => tech.logo)}
-          deferMs={4500}
-        />
+      <MediaPreloader logos={technologies.map((tech) => tech.logo)} />
       <div className="relative z-10 flex min-h-full flex-col">
         <SiteNav />
         <header

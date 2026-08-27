@@ -764,3 +764,5 @@ function Band({
 }
 
 useGLTF.preload(CARD_GLB);
+useTexture.preload(LANYARD_PNG);
+useTexture.preload("/id/portrait.jpg");

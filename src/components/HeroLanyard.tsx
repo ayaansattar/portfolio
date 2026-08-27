@@ -14,9 +14,23 @@ const CARD_INFO = {
   backNote: "Building things on the web.",
 } as const;
 
+const CARD_ASSETS = [
+  "/lanyard/card.glb",
+  "/lanyard/lanyard.png",
+  "/id/portrait.jpg",
+] as const;
+
+function warmLanyardAssets() {
+  void import("@/components/Lanyard");
+  for (const href of CARD_ASSETS) {
+    void fetch(href, { method: "GET", credentials: "same-origin" }).catch(
+      () => {},
+    );
+  }
+}
+
 export function HeroLanyard() {
   const [isMobile, setIsMobile] = useState(false);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -27,22 +41,10 @@ export function HeroLanyard() {
   }, []);
 
   useEffect(() => {
-    const onDone = () => setReady(true);
-    window.addEventListener("portfolio-intro-done", onDone);
-
-    // Fallback if the event already fired / intro was skipped.
-    const fallback = window.setTimeout(() => setReady(true), 8000);
-
-    return () => {
-      window.removeEventListener("portfolio-intro-done", onDone);
-      window.clearTimeout(fallback);
-    };
+    // Start the 3D chunk + assets immediately so the card is ready under the intro.
+    warmLanyardAssets();
   }, []);
 
-  if (!ready) return null;
-
-  // Desktop keeps the original full-hero right hang.
-  // Mobile: smaller card, clipped to the top half.
   return (
     <div
       className={

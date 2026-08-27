@@ -1,0 +1,288 @@
+:root {
+  --folder-color: #70a1ff;
+  --folder-back-color: #4785ff;
+  --paper-1: #e6e6e6;
+  --paper-2: #f2f2f2;
+  --paper-3: #ffffff;
+  --paper-4: #fafafa;
+}
+
+.folder {
+  transition: all 0.2s ease-in;
+  cursor: pointer;
+  position: relative;
+}
+
+.folder:not(.folder--click):hover {
+  transform: translateY(-8px);
+}
+
+.folder:not(.folder--click):hover .paper {
+  transform: translate(-50%, 0%);
+}
+
+.folder:not(.folder--click):hover .folder__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+
+.folder:not(.folder--click):hover .folder__front.right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+
+.folder.open {
+  transform: translateY(-8px);
+}
+
+.folder.open .paper {
+  cursor: pointer;
+}
+
+.folder.open:not(.folder--count-4) .paper:nth-child(1) {
+  transform: translate(calc(-120% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px)))
+    rotateZ(-15deg);
+}
+
+.folder.open:not(.folder--count-4) .paper:nth-child(1):hover {
+  transform: translate(calc(-120% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px)))
+    rotateZ(-15deg) scale(1.08);
+}
+
+.folder.open:not(.folder--count-4) .paper:nth-child(2) {
+  transform: translate(calc(10% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px)))
+    rotateZ(15deg);
+  height: 80%;
+}
+
+.folder.open:not(.folder--count-4) .paper:nth-child(2):hover {
+  transform: translate(calc(10% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px)))
+    rotateZ(15deg) scale(1.08);
+}
+
+.folder.open:not(.folder--count-4) .paper:nth-child(3) {
+  transform: translate(calc(-50% + var(--magnet-x, 0px)), calc(-100% + var(--magnet-y, 0px)))
+    rotateZ(5deg);
+  height: 80%;
+}
+
+.folder.open:not(.folder--count-4) .paper:nth-child(3):hover {
+  transform: translate(calc(-50% + var(--magnet-x, 0px)), calc(-100% + var(--magnet-y, 0px)))
+    rotateZ(5deg) scale(1.08);
+}
+
+/* Four-up row: equal cards, curved arc above folder */
+.folder--count-4 .paper:nth-child(1),
+.folder--count-4 .paper:nth-child(2),
+.folder--count-4 .paper:nth-child(3),
+.folder--count-4 .paper:nth-child(4) {
+  width: 70px !important;
+  height: 88px !important;
+  min-width: 70px;
+  min-height: 88px;
+  max-width: 70px;
+  max-height: 88px;
+  flex-shrink: 0;
+}
+
+.folder--count-4.open .folder__back {
+  overflow: visible;
+}
+
+.folder--count-4.open .paper {
+  left: 50%;
+  width: 70px !important;
+  height: 88px !important;
+  min-width: 70px;
+  min-height: 88px;
+  max-width: 70px;
+  max-height: 88px;
+  transform-origin: center bottom;
+}
+
+.folder--count-4.open .paper:nth-child(1),
+.folder--count-4.open .paper:nth-child(2),
+.folder--count-4.open .paper:nth-child(3),
+.folder--count-4.open .paper:nth-child(4) {
+  transform: translate(
+      calc(-50% + var(--paper-x, 0px) + var(--magnet-x, 0px)),
+      calc(var(--paper-y, -40px) + var(--magnet-y, 0px))
+    )
+    rotateZ(var(--paper-rotate, 0deg));
+}
+
+.folder--count-4.open .paper:nth-child(1) {
+  --paper-x: -120px;
+  --paper-y: -36px;
+  --paper-rotate: -10deg;
+}
+
+.folder--count-4.open .paper:nth-child(2) {
+  --paper-x: -40px;
+  --paper-y: -58px;
+  --paper-rotate: -4deg;
+}
+
+.folder--count-4.open .paper:nth-child(3) {
+  --paper-x: 40px;
+  --paper-y: -58px;
+  --paper-rotate: 4deg;
+}
+
+.folder--count-4.open .paper:nth-child(4) {
+  --paper-x: 120px;
+  --paper-y: -36px;
+  --paper-rotate: 10deg;
+}
+
+.folder--count-4.open .paper:nth-child(1):hover,
+.folder--count-4.open .paper:nth-child(2):hover,
+.folder--count-4.open .paper:nth-child(3):hover,
+.folder--count-4.open .paper:nth-child(4):hover {
+  transform: translate(
+      calc(-50% + var(--paper-x, 0px) + var(--magnet-x, 0px)),
+      calc(var(--paper-y, -40px) + var(--magnet-y, 0px))
+    )
+    rotateZ(var(--paper-rotate, 0deg)) scale(1.06);
+}
+
+.folder.open .folder__front {
+  transform: skew(15deg) scaleY(0.6);
+}
+
+.folder.open .folder__front.right {
+  transform: skew(-15deg) scaleY(0.6);
+}
+
+.folder__back {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  background: var(--folder-back-color);
+  border-radius: 0 10px 10px 10px;
+}
+
+.folder__back::after {
+  position: absolute;
+  z-index: 0;
+  bottom: 98%;
+  left: 0;
+  content: "";
+  width: 30px;
+  height: 10px;
+  background: var(--folder-back-color);
+  border-radius: 5px 5px 0 0;
+}
+
+.paper {
+  position: absolute;
+  z-index: 2;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  width: 70%;
+  height: 80%;
+  background: var(--paper-1);
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.18);
+}
+
+.paper:nth-child(2) {
+  background: var(--paper-2);
+  width: 80%;
+  height: 70%;
+}
+
+.paper:nth-child(3) {
+  background: var(--paper-3);
+  width: 90%;
+  height: 60%;
+}
+
+.paper:nth-child(4) {
+  background: var(--paper-4);
+  width: 95%;
+  height: 55%;
+}
+
+.folder--count-4 .paper:nth-child(2),
+.folder--count-4 .paper:nth-child(3),
+.folder--count-4 .paper:nth-child(4) {
+  width: 70px !important;
+  height: 88px !important;
+}
+
+.folder__front {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  background: var(--folder-color);
+  border-radius: 5px 10px 10px 10px;
+  transform-origin: bottom;
+  transition: all 0.3s ease-in-out;
+}
+
+.folder__front.right {
+  z-index: 4;
+}
+
+.folder:focus-visible {
+  outline: 2px solid var(--accent, #ff6b1a);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.folder__hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.75rem);
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-dim, #5a5a54);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .folder--count-4 .paper:nth-child(1),
+  .folder--count-4 .paper:nth-child(2),
+  .folder--count-4 .paper:nth-child(3),
+  .folder--count-4 .paper:nth-child(4),
+  .folder--count-4.open .paper {
+    width: 58px !important;
+    height: 72px !important;
+    min-width: 58px;
+    min-height: 72px;
+    max-width: 58px;
+    max-height: 72px;
+  }
+
+  .folder--count-4.open .paper:nth-child(1) {
+    --paper-x: -96px;
+    --paper-y: -30px;
+    --paper-rotate: -10deg;
+  }
+
+  .folder--count-4.open .paper:nth-child(2) {
+    --paper-x: -32px;
+    --paper-y: -48px;
+    --paper-rotate: -4deg;
+  }
+
+  .folder--count-4.open .paper:nth-child(3) {
+    --paper-x: 32px;
+    --paper-y: -48px;
+    --paper-rotate: 4deg;
+  }
+
+  .folder--count-4.open .paper:nth-child(4) {
+    --paper-x: 96px;
+    --paper-y: -30px;
+    --paper-rotate: 10deg;
+  }
+}

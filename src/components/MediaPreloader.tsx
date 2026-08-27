@@ -17,15 +17,12 @@ const EXPERIENCE_VIDEOS = [
 
 type MediaPreloaderProps = {
   logos: string[];
-  /** Wait this long before warming other media (lets the intro play smoothly). */
-  deferMs?: number;
 };
 
 /**
- * Warms the browser cache after the intro so media is ready when sections
- * enter view — without competing with intro video decode/bandwidth.
+ * Warms caches after the intro finishes so it never competes with first paint.
  */
-export function MediaPreloader({ logos, deferMs = 0 }: MediaPreloaderProps) {
+export function MediaPreloader({ logos }: MediaPreloaderProps) {
   useEffect(() => {
     const idle =
       typeof window.requestIdleCallback === "function"
@@ -45,6 +42,7 @@ export function MediaPreloader({ logos, deferMs = 0 }: MediaPreloaderProps) {
     const imageCache: HTMLImageElement[] = [];
     let idleId = 0;
     let laterId = 0;
+    let started = false;
 
     const preloadLogos = () => {
       for (const src of logos) {
@@ -55,8 +53,6 @@ export function MediaPreloader({ logos, deferMs = 0 }: MediaPreloaderProps) {
       }
     };
 
-    // Prefetch only the first ~1–2MB of each video so autoplay can start
-    // without downloading the entire file up front.
     const warmVideo = (src: string) => {
       const controller = new AbortController();
       controllers.push(controller);
@@ -64,12 +60,13 @@ export function MediaPreloader({ logos, deferMs = 0 }: MediaPreloaderProps) {
         method: "GET",
         headers: { Range: "bytes=0-1500000" },
         signal: controller.signal,
-      }).catch(() => {
-        // Ignore aborts / unsupported Range — LazyVideo still loads normally.
-      });
+      }).catch(() => {});
     };
 
     const startWarming = () => {
+      if (started) return;
+      started = true;
+
       idleId = idle(() => {
         preloadLogos();
         warmVideo(PROJECT_VIDEOS[0]!);
@@ -79,18 +76,20 @@ export function MediaPreloader({ logos, deferMs = 0 }: MediaPreloaderProps) {
         for (const src of PROJECT_VIDEOS.slice(1)) warmVideo(src);
         for (const src of EXPERIENCE_VIDEOS) warmVideo(src);
         void import("@/components/TechSphere");
-      }, 1800);
+      }, 1200);
     };
 
-    const deferId = window.setTimeout(startWarming, deferMs);
+    window.addEventListener("portfolio-intro-done", startWarming);
+    const fallback = window.setTimeout(startWarming, 7000);
 
     return () => {
-      window.clearTimeout(deferId);
+      window.removeEventListener("portfolio-intro-done", startWarming);
+      window.clearTimeout(fallback);
       cancelIdle(idleId);
       window.clearTimeout(laterId);
       for (const controller of controllers) controller.abort();
     };
-  }, [logos, deferMs]);
+  }, [logos]);
 
   return null;
 }

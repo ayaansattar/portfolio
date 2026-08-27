@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import DepthCarousel from "@/components/DepthCarousel";
+import { useMemo, useState, type ReactNode } from "react";
+import Folder from "@/components/Folder";
 import { RevealLine } from "@/components/RevealLine";
+import "./ProjectsSection.css";
 
 type ProjectItem = {
   title: string;
@@ -26,6 +27,7 @@ const projects: ProjectItem[] = [
     href: "https://fixspotify.duckdns.org",
     github: "https://github.com/ayaansattar/FixSpotify",
     video: "/projects/FixSpotify.mp4",
+    frame: "browser",
   },
   {
     title: "OneStopProf",
@@ -37,6 +39,7 @@ const projects: ProjectItem[] = [
     href: "https://onestopprof.streamlit.app/",
     github: "https://github.com/ayaansattar/OneStopProf",
     video: "/projects/OneStopProf.mp4",
+    frame: "browser",
   },
   {
     title: "UAppen",
@@ -58,40 +61,220 @@ const projects: ProjectItem[] = [
     href: "https://cinelog-q45t.onrender.com/",
     github: "https://github.com/ayaansattar/CineLog",
     video: "/projects/CineLog.mp4",
+    frame: "browser",
   },
 ];
 
+function projectUrlLabel(project: ProjectItem) {
+  if (!project.href) return project.title.toLowerCase();
+  try {
+    return new URL(project.href).host;
+  } catch {
+    return project.href;
+  }
+}
+
+function ProjectMedia({
+  project,
+  className,
+  controls = false,
+}: {
+  project: ProjectItem;
+  className: string;
+  controls?: boolean;
+}) {
+  if (project.video) {
+    return (
+      <video
+        className={className}
+        src={project.video}
+        muted
+        loop
+        playsInline
+        autoPlay
+        controls={controls}
+        preload="metadata"
+        aria-hidden={!controls}
+      />
+    );
+  }
+
+  if (project.image) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        className={className}
+        src={project.image}
+        alt={controls ? `${project.title} preview` : ""}
+        draggable={false}
+      />
+    );
+  }
+
+  return null;
+}
+
+function DeviceFrame({
+  project,
+  media,
+  compact = false,
+}: {
+  project: ProjectItem;
+  media: ReactNode;
+  compact?: boolean;
+}) {
+  const isMobile = project.frame === "mobile";
+  const prefix = compact ? "project-paper" : "project-detail";
+
+  if (isMobile) {
+    return (
+      <div className={`${prefix}__phone`}>
+        <div className={`${prefix}__phone-notch`} aria-hidden="true" />
+        <div className={`${prefix}__phone-screen`}>{media}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${prefix}__browser`}>
+      <div className={`${prefix}__browser-bar`} aria-hidden="true">
+        <div className={`${prefix}__browser-dots`}>
+          <span />
+          <span />
+          <span />
+        </div>
+        {!compact ? (
+          <div className={`${prefix}__browser-url`}>{projectUrlLabel(project)}</div>
+        ) : null}
+      </div>
+      <div className={`${prefix}__browser-screen`}>{media}</div>
+    </div>
+  );
+}
+
+function ProjectPaper({ project }: { project: ProjectItem }) {
+  const isMobile = project.frame === "mobile";
+
+  return (
+    <div
+      className={`project-paper${
+        isMobile ? " project-paper--phone" : " project-paper--browser"
+      }`}
+    >
+      <DeviceFrame
+        project={project}
+        compact
+        media={<ProjectMedia project={project} className="project-paper__media" />}
+      />
+      <span className="project-paper__title">{project.title}</span>
+    </div>
+  );
+}
+
+function ProjectDetail({
+  project,
+  onBack,
+}: {
+  project: ProjectItem;
+  onBack: () => void;
+}) {
+  const isMobile = project.frame === "mobile";
+
+  return (
+    <article className="project-detail">
+      <button type="button" className="project-detail__back" onClick={onBack}>
+        ← Back to folder
+      </button>
+
+      <div className="project-detail__grid">
+        <div className="project-detail__copy">
+          <h3 className="font-display text-3xl tracking-tight text-text-primary sm:text-4xl">
+            {project.title}
+          </h3>
+          <p className="mt-3 text-lg text-text-secondary italic">{project.tagline}</p>
+          <p className="mt-6 text-base leading-relaxed text-text-secondary">
+            {project.description}
+          </p>
+          <p className="mt-6 text-sm tracking-wide text-text-dim sm:text-base">
+            {project.stack}
+          </p>
+          {project.href || project.github ? (
+            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+              {project.href ? (
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent transition-colors hover:text-accent-hover"
+                >
+                  Web App ↗
+                </a>
+              ) : null}
+              {project.github ? (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={
+                    project.href
+                      ? "text-text-secondary transition-colors hover:text-accent"
+                      : "text-accent transition-colors hover:text-accent-hover"
+                  }
+                >
+                  GitHub ↗
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+
+        <div
+          className={`project-detail__preview${
+            isMobile
+              ? " project-detail__preview--mobile"
+              : " project-detail__preview--browser"
+          }`}
+        >
+          <DeviceFrame
+            project={project}
+            media={
+              <ProjectMedia
+                project={project}
+                className="project-detail__video"
+                controls
+              />
+            }
+          />
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export function ProjectsSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const active = projects[activeIndex] ?? projects[0];
+  const [folderOpen, setFolderOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  const carouselItems = useMemo(
-    () =>
-      projects.map((project) => {
-        let label = project.title;
-        if (project.href) {
-          try {
-            label = new URL(project.href).host;
-          } catch {
-            label = project.href;
-          }
-        }
+  const selectedProject =
+    selectedIndex !== null ? projects[selectedIndex] : null;
 
-        return {
-          video: project.video,
-          image: project.image,
-          alt: `${project.title} preview`,
-          frame: project.frame ?? "browser",
-          label,
-          zoom: project.title === "OneStopProf" ? 1.2 : undefined,
-        };
-      }),
+  const folderItems = useMemo(
+    () => projects.map((project) => <ProjectPaper key={project.title} project={project} />),
     [],
   );
 
+  const handleItemClick = (index: number) => {
+    setSelectedIndex(index);
+  };
+
+  const handleBack = () => {
+    setSelectedIndex(null);
+    setFolderOpen(true);
+  };
+
   return (
     <section id="projects" className="border-b border-border-dim">
-      <div className="mx-auto w-full max-w-[100rem] px-6 py-24 sm:px-10">
+      <div className="mx-auto w-full max-w-6xl px-6 py-24 sm:px-10">
         <RevealLine>
           <h2 className="font-display text-4xl tracking-tight text-text-primary sm:text-5xl">
             Projects
@@ -99,86 +282,27 @@ export function ProjectsSection() {
           <div className="mt-3 h-px w-24 bg-accent" />
         </RevealLine>
 
-        <div className="mt-6 grid items-start gap-8 lg:mt-8 lg:grid-cols-[minmax(0,22rem)_minmax(50vw,1fr)] xl:grid-cols-[minmax(0,26rem)_minmax(50vw,1fr)] lg:gap-8">
-          <article className="min-w-0 lg:pr-2">
-            <RevealLine>
-              <h3 className="font-display text-3xl tracking-tight text-text-primary sm:text-4xl xl:text-5xl">
-                {active.title}
-              </h3>
-            </RevealLine>
-            <RevealLine>
-              <p className="mt-3 text-lg text-text-secondary italic">
-                {active.tagline}
-              </p>
-            </RevealLine>
-            <RevealLine>
-              <p className="mt-6 text-base leading-relaxed text-text-secondary">
-                {active.description}
-              </p>
-            </RevealLine>
-            <RevealLine>
-              <p className="mt-6 text-sm tracking-wide text-text-dim sm:text-base">
-                {active.stack}
-              </p>
-            </RevealLine>
-            {active.href || active.github ? (
-              <RevealLine>
-                <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
-                  {active.href ? (
-                    <a
-                      href={active.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent transition-colors hover:text-accent-hover"
-                    >
-                      Web App ↗
-                    </a>
-                  ) : null}
-                  {active.github ? (
-                    <a
-                      href={active.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={
-                        active.href
-                          ? "text-text-secondary transition-colors hover:text-accent"
-                          : "text-accent transition-colors hover:text-accent-hover"
-                      }
-                    >
-                      GitHub ↗
-                    </a>
-                  ) : null}
-                </div>
-              </RevealLine>
-            ) : null}
-          </article>
-
-          <RevealLine className="min-w-0 overflow-visible" threshold={0.1}>
-            <div className="relative aspect-[16/10] w-full min-h-[18rem] overflow-visible sm:min-h-[22rem]">
-              <DepthCarousel
-                className="depth-carousel--spread-arrows"
-                items={carouselItems}
-                cardWidth={900}
-                cardHeight={562}
-                radius={16}
-                tint="#0b0c0e"
-                depth={220}
-                spread={100}
-                tilt={18}
-                tiltDirection="right"
-                perspective={1500}
-                visibleCards={3}
-                falloff={0.2}
-                blur={5}
-                align="top"
-                autoplay
-                autoplayDelay={4200}
-                loop
-                onChange={(index) => setActiveIndex(index)}
-              />
-            </div>
-          </RevealLine>
-        </div>
+        <RevealLine className="mt-20 sm:mt-24" threshold={0.1}>
+          <div className="projects-stage">
+            {selectedProject ? (
+              <ProjectDetail project={selectedProject} onBack={handleBack} />
+            ) : (
+              <div className="projects-folder-wrap">
+                <Folder
+                  color="#ff6b1a"
+                  size={2.75}
+                  items={folderItems}
+                  open={folderOpen}
+                  onOpenChange={setFolderOpen}
+                  onItemClick={handleItemClick}
+                  clickMode
+                  className="projects-folder"
+                  label="Projects folder"
+                />
+              </div>
+            )}
+          </div>
+        </RevealLine>
       </div>
     </section>
   );

@@ -35,7 +35,17 @@ export default function RootLayout({
       lang="en"
       className={`${outfit.variable} ${newsreader.variable} ${lobster.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <link
+          rel="preload"
+          href="/lanyard/card.glb"
+          as="fetch"
+          crossOrigin="anonymous"
+        />
+        <link rel="preload" href="/id/portrait.jpg" as="image" />
+        <link rel="preload" href="/lanyard/lanyard.png" as="image" />
+        {children}
+      </body>
     </html>
   );
 }
