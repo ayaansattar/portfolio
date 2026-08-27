@@ -29,6 +29,13 @@ import "./Lanyard.css";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
+type BandMaterial = InstanceType<typeof MeshLineMaterial> & {
+  map: THREE.Texture | null;
+  useMap: number;
+  needsUpdate: boolean;
+  resolution: THREE.Vector2;
+};
+
 const CARD_GLB = "/lanyard/card.glb";
 const LANYARD_PNG = "/lanyard/lanyard.png";
 
@@ -431,7 +438,11 @@ function Band({
   const rot = useMemo(() => new THREE.Vector3(), []);
   const dir = useMemo(() => new THREE.Vector3(), []);
 
-  const bandGeometry = useMemo(() => new MeshLineGeometry(), []);
+  const bandGeometry = useMemo(() => {
+    return new MeshLineGeometry() as unknown as THREE.BufferGeometry & {
+      setPoints: (points: THREE.Vector3[]) => void;
+    };
+  }, []);
   const bandMaterial = useMemo(() => {
     const material = new MeshLineMaterial({
       color: new THREE.Color("white"),
@@ -440,10 +451,7 @@ function Band({
       resolution: new THREE.Vector2(1000, isMobile ? 2000 : 1000),
       lineWidth: lanyardWidth,
       repeat: new THREE.Vector2(-4, 1),
-    }) as InstanceType<typeof MeshLineMaterial> & {
-      map: THREE.Texture | null;
-      useMap: number;
-    };
+    }) as BandMaterial;
     material.useMap = 1;
     return material;
   }, [isMobile, lanyardWidth]);
@@ -758,7 +766,7 @@ function Band({
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band} geometry={bandGeometry} material={bandMaterial} />
+      <mesh ref={band} geometry={bandGeometry} material={bandMaterial as unknown as THREE.Material} />
     </>
   );
 }
