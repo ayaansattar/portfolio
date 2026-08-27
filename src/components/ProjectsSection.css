@@ -284,12 +284,89 @@
 
 @media (max-width: 767px) {
   .projects-folder-wrap {
-    padding-top: 8rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 1.5rem;
     min-height: 12rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .projects-folder-wrap--open {
+    min-height: 18rem;
   }
 
   .projects-folder {
-    transform: scale(1.75) !important;
+    transform: none !important;
+  }
+
+  .projects-folder--mobile {
+    transform: scale(2.1) !important;
+  }
+
+  .projects-folder--mobile .folder.open .paper {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 10%) !important;
+  }
+
+  .projects-mobile-curve {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.7rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem 1rem 1.25rem;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .projects-mobile-curve__card {
+    position: relative;
+    flex: 0 0 7.25rem;
+    width: 7.25rem;
+    height: 9rem;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 12px;
+    background: #0b0c0e;
+    overflow: hidden;
+    scroll-snap-align: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgb(0 0 0 / 0.35);
+    transition: transform 0.25s ease;
+  }
+
+  .projects-mobile-curve__card--1 {
+    transform: translateY(1.1rem) rotate(-8deg);
+  }
+
+  .projects-mobile-curve__card--2 {
+    transform: translateY(0.15rem) rotate(-2.5deg);
+  }
+
+  .projects-mobile-curve__card--3 {
+    transform: translateY(0.15rem) rotate(2.5deg);
+  }
+
+  .projects-mobile-curve__card--4 {
+    transform: translateY(1.1rem) rotate(8deg);
+  }
+
+  .projects-mobile-curve__card:active {
+    transform: translateY(0) rotate(0deg) scale(0.97);
+  }
+
+  .projects-mobile-curve__card .project-paper,
+  .projects-mobile-curve__card .project-paper__browser,
+  .projects-mobile-curve__card .project-paper__phone {
+    border-radius: 12px;
   }
 }
 

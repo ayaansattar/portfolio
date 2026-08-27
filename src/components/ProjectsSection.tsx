@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Folder from "@/components/Folder";
 import { RevealLine } from "@/components/RevealLine";
 import "./ProjectsSection.css";
@@ -254,6 +254,15 @@ function ProjectDetail({
 export function ProjectsSection() {
   const [folderOpen, setFolderOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const selectedProject =
     selectedIndex !== null ? projects[selectedIndex] : null;
@@ -287,16 +296,43 @@ export function ProjectsSection() {
             {selectedProject ? (
               <ProjectDetail project={selectedProject} onBack={handleBack} />
             ) : (
-              <div className="projects-folder-wrap">
+              <div
+                className={`projects-folder-wrap${
+                  folderOpen ? " projects-folder-wrap--open" : ""
+                }`}
+              >
+                {isMobile && folderOpen ? (
+                  <div
+                    className="projects-mobile-curve"
+                    role="list"
+                    aria-label="Projects"
+                  >
+                    {projects.map((project, index) => (
+                      <button
+                        key={project.title}
+                        type="button"
+                        role="listitem"
+                        className={`projects-mobile-curve__card projects-mobile-curve__card--${index + 1}`}
+                        onClick={() => handleItemClick(index)}
+                        aria-label={`Open ${project.title}`}
+                      >
+                        <ProjectPaper project={project} />
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
                 <Folder
                   color="#ff6b1a"
-                  size={2.75}
+                  size={isMobile ? 2.1 : 2.75}
                   items={folderItems}
                   open={folderOpen}
                   onOpenChange={setFolderOpen}
                   onItemClick={handleItemClick}
                   clickMode
-                  className="projects-folder"
+                  className={`projects-folder${
+                    isMobile ? " projects-folder--mobile" : ""
+                  }`}
                   label="Projects folder"
                 />
               </div>

@@ -60,7 +60,7 @@ export default function Home() {
           <HeroLanyard />
           <div className="relative z-10 flex min-h-svh flex-col pointer-events-none">
             <main
-              className="pointer-events-auto relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-start justify-center px-6 pb-16 pt-10 text-left max-md:items-center max-md:text-center sm:px-10 md:pt-8"
+              className="pointer-events-auto relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-start justify-center px-6 pb-16 pt-10 text-left max-md:items-center max-md:justify-end max-md:pb-14 max-md:pt-[52%] max-md:text-center sm:px-10 md:pt-8"
             >
               <p className="animate-rise font-display text-7xl leading-none tracking-tight text-text-primary sm:text-8xl md:text-9xl">
                 Ayaan

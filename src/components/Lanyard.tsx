@@ -71,6 +71,8 @@ type LanyardProps = {
   lanyardWidth?: number;
   cardInfo?: CardInfo;
   hangOffset?: [number, number, number];
+  /** When false, card sways with physics but cannot be dragged. */
+  interactive?: boolean;
 };
 
 type BandProps = {
@@ -84,6 +86,7 @@ type BandProps = {
   lanyardWidth?: number;
   cardInfo?: CardInfo;
   hangOffset?: [number, number, number];
+  interactive?: boolean;
 };
 
 function resolveFont(cssVar: string, fallback: string) {
@@ -363,6 +366,7 @@ export default function Lanyard({
   lanyardWidth = 1,
   cardInfo = {},
   hangOffset = [0, 4, 0],
+  interactive = true,
 }: LanyardProps) {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 768,
@@ -383,7 +387,9 @@ export default function Lanyard({
           gl={{ alpha: transparent, antialias: true, powerPreference: "high-performance" }}
           style={{ pointerEvents: "none" }}
           eventSource={
-            typeof document !== "undefined" ? document.documentElement : undefined
+            interactive && typeof document !== "undefined"
+              ? document.documentElement
+              : undefined
           }
           eventPrefix="client"
           onCreated={({ gl, camera }) => {
@@ -405,6 +411,7 @@ export default function Lanyard({
                 lanyardWidth={lanyardWidth}
                 cardInfo={cardInfo}
                 hangOffset={hangOffset}
+                interactive={interactive}
               />
             </Physics>
           </Suspense>
@@ -425,6 +432,7 @@ function Band({
   lanyardWidth = 1,
   cardInfo = {},
   hangOffset = [0, 4, 0],
+  interactive = true,
 }: BandProps) {
   const band = useRef<THREE.Mesh>(null);
   const fixed = useRef<RapierRigidBody>(null);
@@ -704,6 +712,19 @@ function Band({
           true,
         );
       }
+
+      // Gentle idle sway when the card isn't interactive (e.g. mobile).
+      if (!interactive && !dragged) {
+        const t = state.clock.elapsedTime;
+        card.current.applyImpulse(
+          {
+            x: Math.sin(t * 0.7) * 0.0022,
+            y: 0,
+            z: Math.cos(t * 0.55) * 0.0014,
+          },
+          true,
+        );
+      }
     }
   });
 
@@ -734,13 +755,19 @@ function Band({
           <group
             scale={2.25}
             position={[0, -1.2, -0.05]}
-            onPointerOver={() => hover(true)}
-            onPointerOut={() => hover(false)}
+            onPointerOver={() => {
+              if (interactive) hover(true);
+            }}
+            onPointerOut={() => {
+              if (interactive) hover(false);
+            }}
             onPointerUp={(e) => {
+              if (!interactive) return;
               (e.target as Element).releasePointerCapture(e.pointerId);
               drag(false);
             }}
             onPointerDown={(e) => {
+              if (!interactive) return;
               (e.target as Element).setPointerCapture(e.pointerId);
               drag(
                 new THREE.Vector3()
