@@ -1,104 +1,96 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const NAME = "Ayaan";
-const LETTERS = NAME.split("");
-const STAGGER_MS = 95;
-const LETTER_DURATION_MS = 700;
-const HOLD_MS = 700;
+const HOLD_MS = 900;
+const EXIT_MS = 500;
+const FAILSAFE_MS = 4000;
+
+type Stage = "enter" | "hold" | "exit" | "done";
+
+function lockScroll() {
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+}
+
+function unlockScroll() {
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+}
+
+function resetToTop() {
+  if (window.location.hash) {
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+}
 
 export function LoadingScreen() {
-  const [phase, setPhase] = useState<
-    "boot" | "enter" | "hold" | "exit" | "gone"
-  >("boot");
+  const finished = useRef(false);
+  const [stage, setStage] = useState<Stage>("enter");
+  const [nameIn, setNameIn] = useState(false);
 
-  useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (reduceMotion) {
-      setPhase("enter");
-      const timer = window.setTimeout(() => {
-        setPhase("gone");
-        document.body.style.overflow = previousOverflow;
-      }, 350);
-      return () => {
-        window.clearTimeout(timer);
-        document.body.style.overflow = previousOverflow;
-      };
-    }
-
-    const enterStart = 50;
-    const enterDone =
-      enterStart + (LETTERS.length - 1) * STAGGER_MS + LETTER_DURATION_MS;
-    const exitStart = enterDone + HOLD_MS;
-    const exitDone =
-      exitStart + (LETTERS.length - 1) * STAGGER_MS + LETTER_DURATION_MS;
-    const screenFade = 450;
-
-    const enterTimer = window.setTimeout(() => setPhase("enter"), enterStart);
-    const holdTimer = window.setTimeout(() => setPhase("hold"), enterDone);
-    const exitTimer = window.setTimeout(() => setPhase("exit"), exitStart);
-    const goneTimer = window.setTimeout(() => {
-      setPhase("gone");
-      document.body.style.overflow = previousOverflow;
-    }, exitDone + screenFade);
-
-    return () => {
-      window.clearTimeout(enterTimer);
-      window.clearTimeout(holdTimer);
-      window.clearTimeout(exitTimer);
-      window.clearTimeout(goneTimer);
-      document.body.style.overflow = previousOverflow;
-    };
+  const finishIntro = useCallback(() => {
+    if (finished.current) return;
+    finished.current = true;
+    unlockScroll();
+    resetToTop();
+    window.dispatchEvent(new Event("portfolio-intro-done"));
+    setStage("done");
   }, []);
 
-  if (phase === "gone") return null;
+  useEffect(() => {
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+
+    lockScroll();
+    resetToTop();
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      finishIntro();
+      return unlockScroll;
+    }
+
+    const enter = window.setTimeout(() => setNameIn(true), 40);
+    const hold = window.setTimeout(() => setStage("hold"), 700);
+    const failsafe = window.setTimeout(finishIntro, FAILSAFE_MS);
+
+    return () => {
+      window.clearTimeout(enter);
+      window.clearTimeout(hold);
+      window.clearTimeout(failsafe);
+      unlockScroll();
+    };
+  }, [finishIntro]);
+
+  useEffect(() => {
+    if (stage !== "hold") return;
+
+    const exitTimer = window.setTimeout(() => setStage("exit"), HOLD_MS);
+    const doneTimer = window.setTimeout(finishIntro, HOLD_MS + EXIT_MS);
+
+    return () => {
+      window.clearTimeout(exitTimer);
+      window.clearTimeout(doneTimer);
+    };
+  }, [stage, finishIntro]);
+
+  if (stage === "done") return null;
 
   return (
     <div
-      className={`loading-screen ${phase === "exit" ? "loading-screen-exit" : ""}`}
-      style={
-        phase === "exit"
-          ? {
-              transitionDelay: `${
-                (LETTERS.length - 1) * STAGGER_MS + LETTER_DURATION_MS * 0.35
-              }ms`,
-            }
-          : undefined
-      }
-      aria-hidden={phase === "exit"}
+      className={`loading-screen${stage === "exit" ? " loading-screen-exit" : ""}`}
+      aria-hidden={stage === "exit"}
     >
-      <p className="loading-screen-name font-script" aria-label={NAME}>
-        {LETTERS.map((letter, index) => {
-          const delay =
-            phase === "exit"
-              ? `${index * STAGGER_MS}ms`
-              : `${index * STAGGER_MS}ms`;
-
-          let letterClass = "loading-screen-letter";
-          if (phase === "enter" || phase === "hold") {
-            letterClass += " loading-screen-letter-in";
-          } else if (phase === "exit") {
-            letterClass += " loading-screen-letter-out";
-          }
-
-          return (
-            <span
-              key={`${letter}-${index}`}
-              className={letterClass}
-              style={{ transitionDelay: delay }}
-              aria-hidden="true"
-            >
-              {letter}
-            </span>
-          );
-        })}
+      <p
+        className={`loading-screen-name font-script${
+          nameIn ? " loading-screen-name-in" : ""
+        }${stage === "exit" ? " loading-screen-name-out" : ""}`}
+        aria-label={NAME}
+      >
+        {NAME}
       </p>
     </div>
   );

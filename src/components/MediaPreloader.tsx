@@ -20,8 +20,7 @@ type MediaPreloaderProps = {
 };
 
 /**
- * Warms the browser cache during the boot animation so media is ready
- * when sections enter view — without competing with first paint.
+ * Warms caches after the intro finishes so it never competes with first paint.
  */
 export function MediaPreloader({ logos }: MediaPreloaderProps) {
   useEffect(() => {
@@ -29,7 +28,10 @@ export function MediaPreloader({ logos }: MediaPreloaderProps) {
       typeof window.requestIdleCallback === "function"
         ? window.requestIdleCallback.bind(window)
         : (cb: IdleRequestCallback) =>
-            window.setTimeout(() => cb({ didTimeout: false, timeRemaining: () => 0 }), 200);
+            window.setTimeout(
+              () => cb({ didTimeout: false, timeRemaining: () => 0 }),
+              200,
+            );
 
     const cancelIdle =
       typeof window.cancelIdleCallback === "function"
@@ -38,6 +40,9 @@ export function MediaPreloader({ logos }: MediaPreloaderProps) {
 
     const controllers: AbortController[] = [];
     const imageCache: HTMLImageElement[] = [];
+    let idleId = 0;
+    let laterId = 0;
+    let started = false;
 
     const preloadLogos = () => {
       for (const src of logos) {
@@ -48,8 +53,6 @@ export function MediaPreloader({ logos }: MediaPreloaderProps) {
       }
     };
 
-    // Prefetch only the first ~1–2MB of each video so autoplay can start
-    // without downloading the entire file up front.
     const warmVideo = (src: string) => {
       const controller = new AbortController();
       controllers.push(controller);
@@ -57,26 +60,32 @@ export function MediaPreloader({ logos }: MediaPreloaderProps) {
         method: "GET",
         headers: { Range: "bytes=0-1500000" },
         signal: controller.signal,
-      }).catch(() => {
-        // Ignore aborts / unsupported Range — LazyVideo still loads normally.
-      });
+      }).catch(() => {});
     };
 
-    const idleId = idle(() => {
-      preloadLogos();
-      // First project video is highest priority (above the fold after scroll).
-      warmVideo(PROJECT_VIDEOS[0]!);
-    });
+    const startWarming = () => {
+      if (started) return;
+      started = true;
 
-    const laterId = window.setTimeout(() => {
-      for (const src of PROJECT_VIDEOS.slice(1)) warmVideo(src);
-      for (const src of EXPERIENCE_VIDEOS) warmVideo(src);
-      // Warm the TechSphere chunk so Three.js isn't a cold download on scroll.
-      void import("@/components/TechSphere");
-    }, 1800);
+      idleId = idle(() => {
+        preloadLogos();
+        warmVideo(PROJECT_VIDEOS[0]!);
+      }) as number;
+
+      laterId = window.setTimeout(() => {
+        for (const src of PROJECT_VIDEOS.slice(1)) warmVideo(src);
+        for (const src of EXPERIENCE_VIDEOS) warmVideo(src);
+        void import("@/components/TechSphere");
+      }, 1200);
+    };
+
+    window.addEventListener("portfolio-intro-done", startWarming);
+    const fallback = window.setTimeout(startWarming, 7000);
 
     return () => {
-      cancelIdle(idleId as number);
+      window.removeEventListener("portfolio-intro-done", startWarming);
+      window.clearTimeout(fallback);
+      cancelIdle(idleId);
       window.clearTimeout(laterId);
       for (const controller of controllers) controller.abort();
     };

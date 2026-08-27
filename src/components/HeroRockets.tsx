@@ -53,50 +53,15 @@ const heroRockets: RocketConfig[] = [
   },
 ];
 
-const sparseRockets: RocketConfig[] = [
-  {
-    id: 1,
-    mode: "across",
-    top: "20%",
-    delay: "1s",
-    duration: "15s",
-    size: 40,
-  },
-  {
-    id: 2,
-    mode: "liftoff",
-    left: "82%",
-    delay: "6s",
-    duration: "12s",
-    size: 36,
-  },
-  {
-    id: 3,
-    mode: "across",
-    top: "72%",
-    delay: "10s",
-    duration: "16s",
-    size: 34,
-  },
-];
-
-type HeroRocketsProps = {
-  /** hero = denser liftoffs; sparse = quieter (Technologies) */
-  density?: "hero" | "sparse";
-};
-
-export function HeroRockets({ density = "hero" }: HeroRocketsProps) {
-  const rockets = density === "sparse" ? sparseRockets : heroRockets;
-  const prefix = density === "sparse" ? "tech" : "hero";
-
+export function HeroRockets() {
   return (
     <div
       className="hero-rockets pointer-events-none absolute inset-0 z-[1] overflow-hidden"
       aria-hidden="true"
     >
-      {rockets.map((rocket) => (
+      {heroRockets.map((rocket) => (
         <span
-          key={`${prefix}-${rocket.id}`}
+          key={rocket.id}
           className={
             rocket.mode === "liftoff"
               ? "hero-rocket hero-rocket-liftoff absolute"
@@ -109,10 +74,9 @@ export function HeroRockets({ density = "hero" }: HeroRocketsProps) {
             height: rocket.size * 0.45,
             animationDelay: rocket.delay,
             animationDuration: rocket.duration,
-            opacity: density === "sparse" ? 0.72 : 1,
           }}
         >
-          <RocketWithJet id={`${prefix}-${rocket.id}`} />
+          <RocketWithJet id={`hero-${rocket.id}`} />
         </span>
       ))}
     </div>

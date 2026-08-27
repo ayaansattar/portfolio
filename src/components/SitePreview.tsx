@@ -56,7 +56,7 @@ type SitePreviewRowProps = {
 
 export function SitePreviewRow({ demos }: SitePreviewRowProps) {
   return (
-    <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-3">
+    <div className="mt-8 grid grid-cols-3 gap-2 max-md:grid-cols-1 max-md:gap-3 sm:gap-3">
       {demos.map((demo) => (
         <SitePreview
           key={demo.src}
